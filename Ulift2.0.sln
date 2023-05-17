@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ulift2.0", "Ulift2.0\Ulift2.0.csproj", "{A8CDA1BB-5FD1-43C2-A5A1-B231BF3A3B4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8CDA1BB-5FD1-43C2-A5A1-B231BF3A3B4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8CDA1BB-5FD1-43C2-A5A1-B231BF3A3B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8CDA1BB-5FD1-43C2-A5A1-B231BF3A3B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8CDA1BB-5FD1-43C2-A5A1-B231BF3A3B4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52B3FA8F-79C7-496C-8F03-C3646A9D47FA}
+	EndGlobalSection
+EndGlobal

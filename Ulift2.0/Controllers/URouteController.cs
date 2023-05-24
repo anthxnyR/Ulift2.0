@@ -18,5 +18,33 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAllRoutes());
         }
+        [HttpPost]
+        public async Task<IActionResult> InsertRoute([FromBody] Models.URoute route)
+        {
+            if (route == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateRouteAttributes(route, ModelState);
+            await db.InsertRoute(route);
+            return Created("Created", true);
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateRoute([FromBody] Models.URoute route)
+        {
+            if (route == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateRouteAttributes(route, ModelState);
+            await db.UpdateRoute(route);
+            return Created("Created", true);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRoute(String id)
+        {
+            await db.DeleteRoute(id);
+            return NoContent();
+        }
     }
 }

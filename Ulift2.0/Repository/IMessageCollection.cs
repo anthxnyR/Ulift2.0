@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,10 @@ namespace Ulift2._0.Repository
 {
     interface IMessageCollection
     {
+        Task InsertMessage(Message message);
+        Task UpdateMessage(Message message);
+        Task DeleteMessage(String id);
         Task<IEnumerable<Message>> GetAllMessages();
+        void ValidateMessageAttributes(Message message, ModelStateDictionary ModelState);
     }
 }

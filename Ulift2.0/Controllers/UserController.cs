@@ -18,5 +18,33 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAllUsers());
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromBody] Models.User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateUserAttributes(user, ModelState);
+            await db.InsertUser(user);
+            return Created("Created", true);
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] Models.User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateUserAttributes(user, ModelState);
+            await db.UpdateUser(user);
+            return Created("Created", true);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(String id)
+        {
+            await db.DeleteUser(id);
+            return NoContent();
+        }
     }
 }

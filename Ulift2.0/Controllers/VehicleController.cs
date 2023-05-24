@@ -18,5 +18,33 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAllVehicles());
         }
+        [HttpPost]
+        public async Task<IActionResult> InsertVehicle([FromBody] Models.Vehicle vehicle)
+        {
+            if (vehicle == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateVehicleAttributes(vehicle, ModelState);
+            await db.InsertVehicle(vehicle);
+            return Created("Created", true);
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateVehicle([FromBody] Models.Vehicle vehicle)
+        {
+            if (vehicle == null)
+            {
+                return BadRequest();
+            }
+            db.ValidateVehicleAttributes(vehicle, ModelState);
+            await db.UpdateVehicle(vehicle);
+            return Created("Created", true);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVehicle(String id)
+        {
+            await db.DeleteVehicle(id);
+            return NoContent();
+        }
     }
 }

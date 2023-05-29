@@ -13,6 +13,18 @@ namespace Ulift2._0.Controllers
     public class AuthController : Controller
     {
         private IAuthCollection db = new AuthCollection();
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] Models.User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            await db.Login(user.Email, user.Password);
+            return Ok("Logueado");
+        }
+
         [HttpPost("SignUp")]
         public async Task<IActionResult> Register([FromBody] Models.User user)
         {
@@ -37,8 +49,5 @@ namespace Ulift2._0.Controllers
             }
             
         }
-
-
-
     }
 }

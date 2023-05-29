@@ -9,7 +9,7 @@ namespace Ulift2._0.Repository
 {
     public interface IAuthCollection
     {
-        //Task Login(User user);
+        Task Login(string email, string password);
         Task Register(User user);
         Task Verify(string Token);
         void SendConfirmationEmail(String recipientEmail, string recipientName);

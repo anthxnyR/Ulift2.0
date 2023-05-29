@@ -12,6 +12,7 @@ using BCrypt.Net;
 using System.Net.Mail;
 using System.Net;
 using Ulift2._0.Helpers;
+using Serilog;
 
 namespace Ulift2._0.Repository
 {
@@ -23,6 +24,37 @@ namespace Ulift2._0.Repository
         public AuthCollection()
         {
             Collection = _repository.db.GetCollection<User>("Users");
+        }
+
+        public async Task Login(string email, string password)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException("El correo electrónico es obligatorio", nameof(email));
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("La contraseña es obligatoria", nameof(password));
+            }
+
+            var user = await Collection.Find(x => x.Email == email).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                throw new Exception("El usuario no existe");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                throw new Exception("Contraseña incorrecta");
+            }
+
+            if (!user.ConfirmedUser)
+            {
+                throw new Exception("El usuario no está verificado");
+            }
+
+            Log.Information("Usuario logueado");
         }
 
         public async Task Register ([FromBody] User request)
@@ -48,7 +80,6 @@ namespace Ulift2._0.Repository
                 SendConfirmationEmail(newUser.Email, newUser.Name);
                 await Collection.InsertOneAsync(newUser);
             }
-                
             else
             {
                 throw new Exception("El usuario ya existe");

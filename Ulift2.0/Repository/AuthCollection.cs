@@ -12,6 +12,8 @@ using BCrypt.Net;
 using System.Net.Mail;
 using System.Net;
 using Ulift2._0.Helpers;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Ulift2._0.Repository
 {
@@ -39,16 +41,35 @@ namespace Ulift2._0.Repository
                 PhotoURL = request.PhotoURL,
                 Gender = request.Gender,
                 Role = request.Role,
+                EmergencyContact = request.EmergencyContact,
+                PassengerRating = 0,
+                DriverRating = 0,
                 ConfirmedUser = false
             };
 
+            
             var result = await Collection.Find(x => x.Email == newUser.Email).FirstOrDefaultAsync();
             if (result == null)
             {
-                SendConfirmationEmail(newUser.Email, newUser.Name);
-                await Collection.InsertOneAsync(newUser);
+                var httpclient = new HttpClient();
+                httpclient.BaseAddress = new Uri("https://localhost:7007");
+                var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
+                var response = await httpclient.PostAsync("/api/User", content);
+                string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
+                if (!Regex.IsMatch(newUser.Email, domainPattern, RegexOptions.IgnoreCase))
+                {
+                    throw new Exception("El correo electrónico no pertenece al dominio UCAB");
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    SendConfirmationEmail(newUser.Email, newUser.Name);
+                }
+                else
+                {
+                    throw new Exception("El usuario no pudo ser registrado");
+                }  
             }
-                
             else
             {
                 throw new Exception("El usuario ya existe");

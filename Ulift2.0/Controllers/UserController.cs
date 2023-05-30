@@ -25,9 +25,18 @@ namespace Ulift2._0.Controllers
             {
                 return BadRequest();
             }
+            Console.WriteLine("Validating user attributes");
             db.ValidateUserAttributes(user, ModelState);
-            await db.InsertUser(user);
-            return Created("Created", true);
+            if (ModelState.IsValid)
+            {
+                await db.InsertUser(user);
+                return Created("Created", true);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
         }
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] Models.User user)

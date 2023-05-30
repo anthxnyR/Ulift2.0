@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Ulift2._0.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns;
+using System.Net.Mail;
 
 namespace Ulift2._0.Repository
 {
@@ -38,9 +40,20 @@ namespace Ulift2._0.Repository
         }
         public void ValidateUserAttributes(User user, ModelStateDictionary ModelState)
         {
+            Console.WriteLine("Validating user attributes");
             if (user.Email == null)
             {
                 ModelState.AddModelError("Email", "El usuario debe tener un email asociado");
+            }
+            else
+            {
+                string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
+                if (!Regex.IsMatch(user.Email, domainPattern, RegexOptions.IgnoreCase))
+                {
+                    Console.WriteLine("No es un correo UCAB");
+                    ModelState.AddModelError("Email", "El correo electrónico no pertenece al dominio UCAB");
+                    throw new Exception("El correo electrónico no pertenece al dominio UCAB");
+                }
             }
             if (user.Password == null)
             {

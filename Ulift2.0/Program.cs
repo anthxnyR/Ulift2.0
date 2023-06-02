@@ -27,7 +27,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+// app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod());
+
+// Jiiiiiiiiiiii
+// var myAllowedOrigins = "_myAllowedOrigins";
+// builder.Services.AddCors(options => 
+// {
+//     options.AddPolicy(name: myAllowedOrigins, policy => 
+//     {
+//         policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+//     });
+// });
+// app.UseCors(myAllowedOrigins)
 
 app.UseAuthorization();
 

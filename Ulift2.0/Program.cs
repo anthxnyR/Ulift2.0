@@ -8,11 +8,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+var myAllowedOrigins = "_myAllowedOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy(name: myAllowedOrigins, policy =>
     {
-        builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -30,15 +31,8 @@ app.UseHttpsRedirection();
 // app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod());
 
 // Jiiiiiiiiiiii
-var myAllowedOrigins = "_myAllowedOrigins";
-builder.Services.AddCors(options => 
-    {
-        options.AddPolicy(name: myAllowedOrigins, policy => 
-            {
-                policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
-     });
- });
-app.UseCors(myAllowedOrigins)
+
+app.UseCors(myAllowedOrigins);
 
 app.UseAuthorization();
 

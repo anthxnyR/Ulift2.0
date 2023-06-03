@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Ulift2._0.Repository;
 namespace Ulift2._0.Controllers
 {
-    [EnableCors("MyAllowSpecificOrigins")]
+    [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : Controller

@@ -26,7 +26,7 @@ namespace Ulift2._0.Controllers
             return Ok("Logueado");
         }
 
-        [EnableCors("_myAllowSpecificOrigins")]
+        [EnableCors("MyAllowSpecificOrigins")]
         [HttpPost("SignUp")]
         public async Task<IActionResult> Register([FromBody] Models.User user)
         {

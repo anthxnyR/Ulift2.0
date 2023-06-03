@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MongoDB.Bson;
 using System;
@@ -24,7 +25,7 @@ namespace Ulift2._0.Controllers
             await db.Login(user.Email, user.Password);
             return Ok("Logueado");
         }
-
+        [EnableCors("MyAllowSpecificOrigins")]
         [HttpPost("SignUp")]
         public async Task<IActionResult> Register([FromBody] Models.User user)
         {

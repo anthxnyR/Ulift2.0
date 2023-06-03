@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Ulift2._0.Repository;
 namespace Ulift2._0.Controllers
 {
-    [EnableCors("MyAllowSpecificOrigins")]
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : Controller
@@ -25,7 +25,8 @@ namespace Ulift2._0.Controllers
             }
             await db.Login(user.Email, user.Password);
             return Ok("Logueado");
-        
+        }
+
         [HttpPost("SignUp")]
         public async Task<IActionResult> Register([FromBody] Models.User user)
         {

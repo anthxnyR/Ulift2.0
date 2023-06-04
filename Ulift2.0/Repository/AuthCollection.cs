@@ -59,7 +59,7 @@ namespace Ulift2._0.Repository
             Log.Information("Usuario logueado");
         }
 
-        public async Task Register ([FromBody] User request)
+        public async Task Register ([FromForm] User request)
         {
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);

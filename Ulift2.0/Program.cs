@@ -1,3 +1,5 @@
+using Ulift2._0;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,19 +13,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseCors();
-app.UseAuthorization();
-app.UseAuthentication();
-
-app.MapControllers();
-
-app.Run();
+var startup = new Startup();
+startup.Configure(app, builder.Environment);
 
 app.Run();

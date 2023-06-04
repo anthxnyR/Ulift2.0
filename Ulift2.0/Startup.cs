@@ -8,8 +8,6 @@ namespace Ulift2._0
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             services.AddCors(options =>
             {

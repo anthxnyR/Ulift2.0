@@ -64,13 +64,18 @@ namespace Ulift2._0.Repository
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
 
+            var Photo = request.File.FileName;
+
+            Console.WriteLine(request.File.FileName);
+            Console.WriteLine(Photo);
+
             var newUser = new User
             {
                 Email = request.Email,
                 Password = hash,
                 Name = request.Name,
                 LastName = request.LastName,
-                PhotoURL = request.PhotoURL,
+                PhotoURL = Photo,
                 Gender = request.Gender,
                 Role = request.Role,
                 EmergencyContact = request.EmergencyContact,

@@ -61,6 +61,7 @@ namespace Ulift2._0.Repository
 
         public async Task Register ([FromForm] User request)
         {
+            Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
 

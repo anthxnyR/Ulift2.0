@@ -13,5 +13,6 @@ namespace Ulift2._0.Repository
         Task Register(User user);
         Task Verify(string Token);
         void SendConfirmationEmail(String recipientEmail, string recipientName);
+        string SaveImage(IFormFile file);
     }
 }

@@ -64,10 +64,7 @@ namespace Ulift2._0.Repository
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
 
-            var Photo = request.File.FileName;
-
-            Console.WriteLine(request.File.FileName);
-            Console.WriteLine(Photo);
+            string fileName = SaveImage(request.Photo);
 
             var newUser = new User
             {
@@ -75,7 +72,7 @@ namespace Ulift2._0.Repository
                 Password = hash,
                 Name = request.Name,
                 LastName = request.LastName,
-                PhotoURL = Photo,
+                PhotoURL = fileName,
                 Gender = request.Gender,
                 Role = request.Role,
                 EmergencyContact = request.EmergencyContact,
@@ -164,6 +161,18 @@ namespace Ulift2._0.Repository
             mailMessage.To.Add(new MailAddress(recipientEmail));
 
             smtpClient.Send(mailMessage);
+        }
+
+        public string SaveImage(IFormFile file)
+        {
+            string extension = Path.GetExtension(file.FileName);
+            string fileName = Guid.NewGuid().ToString() + extension;
+            string fileRoute = Path.Combine("images/", fileName);
+            using (var stream = new FileStream(fileRoute, FileMode.Create))
+            {
+                file.CopyToAsync(stream);
+            }
+            return fileName.ToString();
         }
     }
 }

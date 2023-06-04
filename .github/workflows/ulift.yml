@@ -2,7 +2,7 @@ name: Build and deploy .NET Core application to Web App ulift with API Managemen
 on:
   push:
     branches:
-    - CORS-Setting
+    - master
 env:
   AZURE_WEBAPP_NAME: ulift
   AZURE_WEBAPP_PACKAGE_PATH: Ulift2.0\publish
@@ -64,7 +64,7 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.ulift_76D0 }}
+        publish-profile: ${{ secrets.ulift_D2EE }}
     - name: Azure Login
       uses: azure/login@v1
       with:

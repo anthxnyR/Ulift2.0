@@ -30,7 +30,7 @@ namespace Ulift2._0.Controllers
 
         [EnableCors("MyCorsPolicy")]
         [HttpPost("SignUp")]
-        public async Task<IActionResult> Register([FromBody] Models.User user)
+        public async Task<IActionResult> Register([FromForm] Models.User user)
         {
             if (user == null)
             {

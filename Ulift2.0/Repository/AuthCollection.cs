@@ -58,7 +58,7 @@ namespace Ulift2._0.Repository
 
             Log.Information("Usuario logueado");
         }
-
+        
         public async Task Register ([FromForm] User request)
         {
             Console.WriteLine(request);
@@ -102,7 +102,7 @@ namespace Ulift2._0.Repository
                     throw new Exception("El correo electrónico no pertenece al dominio UCAB");
                 }
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)  // No está funcionando (revisar)
                 {
                     SendConfirmationEmail(newUser.Email, newUser.Name);
                 }

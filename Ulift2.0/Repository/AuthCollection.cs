@@ -64,8 +64,14 @@ namespace Ulift2._0.Repository
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
+            if (request.Photo.Equals(null))
+            {
+                System.Diagnostics.Trace.TraceInformation("No hay foto de perfil");
+            }
 
             string fileName = SaveImage(request.Photo);
+            System.Diagnostics.Trace.TraceInformation(fileName);
+
 
             var newUser = new User
             {
@@ -167,6 +173,7 @@ namespace Ulift2._0.Repository
         public string SaveImage(IFormFile file)
         {
             string extension = Path.GetExtension(file.FileName);
+            System.Diagnostics.Trace.TraceInformation(extension);
             string fileName = Guid.NewGuid().ToString() + extension;
             string fileRoute = Path.Combine("images/", fileName);
             using (var stream = new FileStream(fileRoute, FileMode.Create))

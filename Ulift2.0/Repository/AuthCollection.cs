@@ -170,17 +170,17 @@ namespace Ulift2._0.Repository
             smtpClient.Send(mailMessage);
         }
 
-        public string SaveImage(IFormFile file)
-        {
-            string extension = Path.GetExtension(file.FileName);
-            System.Diagnostics.Trace.WriteLine(extension);
-            string fileName = Guid.NewGuid().ToString() + extension;
-            string fileRoute = Path.Combine("images/", fileName);
-            using (var stream = new FileStream(fileRoute, FileMode.Create))
-            {
-                file.CopyToAsync(stream);
-            }
-            return fileName.ToString();
-        }
+        // public string SaveImage(IFormFile file)
+        // {
+        //     string extension = Path.GetExtension(file.FileName);
+        //     System.Diagnostics.Trace.WriteLine(extension);
+        //     string fileName = Guid.NewGuid().ToString() + extension;
+        //     string fileRoute = Path.Combine("images/", fileName);
+        //     using (var stream = new FileStream(fileRoute, FileMode.Create))
+        //     {
+        //         file.CopyToAsync(stream);
+        //     }
+        //     return fileName.ToString();
+        // }
     }
 }

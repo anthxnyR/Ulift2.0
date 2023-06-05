@@ -64,7 +64,7 @@ namespace Ulift2._0.Repository
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
-            if (request.Photo.Equals(null))
+            if (request.Photo == null)
             {
                 System.Diagnostics.Trace.WriteLine("No hay foto de perfil");
             }

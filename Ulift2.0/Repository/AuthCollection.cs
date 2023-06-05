@@ -64,13 +64,13 @@ namespace Ulift2._0.Repository
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
-            if (request.Photo == null)
-            {
-                System.Diagnostics.Trace.WriteLine("No hay foto de perfil");
-            }
+            // if (request.Photo == null)
+            // {
+            //     System.Diagnostics.Trace.WriteLine("No hay foto de perfil");
+            // }
 
-            string fileName = SaveImage(request.Photo);
-            System.Diagnostics.Trace.WriteLine(fileName);
+            // string fileName = SaveImage(request.Photo);
+            // System.Diagnostics.Trace.WriteLine(fileName);
 
 
             var newUser = new User
@@ -79,7 +79,7 @@ namespace Ulift2._0.Repository
                 Password = hash,
                 Name = request.Name,
                 LastName = request.LastName,
-                PhotoURL = fileName,
+                PhotoURL = request.PhotoURL,
                 Gender = request.Gender,
                 Role = request.Role,
                 EmergencyContact = request.EmergencyContact,

@@ -64,13 +64,13 @@ namespace Ulift2._0.Repository
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
-            if (request.Photo == null)
-            {
-                System.Diagnostics.Trace.WriteLine("No hay foto de perfil");
-            }
+            // if (request.Photo == null)
+            // {
+            //     System.Diagnostics.Trace.WriteLine("No hay foto de perfil");
+            // }
 
-            string fileName = SaveImage(request.Photo);
-            System.Diagnostics.Trace.WriteLine(fileName);
+            // string fileName = SaveImage(request.Photo);
+            // System.Diagnostics.Trace.WriteLine(fileName);
 
 
             var newUser = new User
@@ -79,7 +79,7 @@ namespace Ulift2._0.Repository
                 Password = hash,
                 Name = request.Name,
                 LastName = request.LastName,
-                PhotoURL = fileName,
+                PhotoURL = request.PhotoURL,
                 Gender = request.Gender,
                 Role = request.Role,
                 EmergencyContact = request.EmergencyContact,
@@ -94,7 +94,7 @@ namespace Ulift2._0.Repository
             {
                 var httpclient = new HttpClient();
                 httpclient.BaseAddress = new Uri("https://localhost:7007");
-                var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "multipart/form-data");
                 var response = await httpclient.PostAsync("/api/User", content);
                 string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
                 if (!Regex.IsMatch(newUser.Email, domainPattern, RegexOptions.IgnoreCase))
@@ -170,17 +170,17 @@ namespace Ulift2._0.Repository
             smtpClient.Send(mailMessage);
         }
 
-        public string SaveImage(IFormFile file)
-        {
-            string extension = Path.GetExtension(file.FileName);
-            System.Diagnostics.Trace.WriteLine(extension);
-            string fileName = Guid.NewGuid().ToString() + extension;
-            string fileRoute = Path.Combine("images/", fileName);
-            using (var stream = new FileStream(fileRoute, FileMode.Create))
-            {
-                file.CopyToAsync(stream);
-            }
-            return fileName.ToString();
-        }
+        // public string SaveImage(IFormFile file)
+        // {
+        //     string extension = Path.GetExtension(file.FileName);
+        //     System.Diagnostics.Trace.WriteLine(extension);
+        //     string fileName = Guid.NewGuid().ToString() + extension;
+        //     string fileRoute = Path.Combine("images/", fileName);
+        //     using (var stream = new FileStream(fileRoute, FileMode.Create))
+        //     {
+        //         file.CopyToAsync(stream);
+        //     }
+        //     return fileName.ToString();
+        // }
     }
 }

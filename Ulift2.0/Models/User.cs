@@ -23,6 +23,5 @@ namespace Ulift2._0.Models
         public double PassengerRating { get; set; }
         public double DriverRating { get; set; }
         public bool ConfirmedUser { get; set; }
-        public IFormFile Photo { get; set; }
     }
 }

@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MongoDB.Bson;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ulift2._0.Models;
 using Ulift2._0.Repository;
+using Ulift2._0.Helpers;
 namespace Ulift2._0.Controllers
 {
 
@@ -18,19 +21,31 @@ namespace Ulift2._0.Controllers
         private IAuthCollection db = new AuthCollection();
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] Models.User user)
+        public async Task<IActionResult> Login([FromBody] Login user)
         {
-            if (user == null)
+            string Email = user.Email;
+            string Password = user.Password;
+
+            if (Email == null)
             {
                 return BadRequest();
             }
-            await db.Login(user.Email, user.Password);
-            return Ok("Logueado");
+            bool LoginSuccess = await db.Login(Email, Password);
+            if (!LoginSuccess)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var payload = new { Email = Email, Password = Password };
+                string tkn = JwtService.GetToken(payload);
+                return Ok(new { Token = tkn, Message = "Logged in successfully" });
+            }
         }
 
         [EnableCors("MyCorsPolicy")]
         [HttpPost("SignUp")]
-        public async Task<IActionResult> Register([FromForm] Models.User user)
+        public async Task<IActionResult> Register([FromBody] Models.User user)
         {
             if (user == null)
             {

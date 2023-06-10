@@ -12,6 +12,7 @@ namespace Ulift2._0.Models
         [BsonId]
         public ObjectId Id;
         public String Email { get; set; }
+        public String Name { get; set; }
         public Double Lat { get; set; }
         public Double Lng { get; set; }
 

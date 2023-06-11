@@ -11,7 +11,7 @@ namespace Ulift2._0.Repository
     {
         Task InsertFavorite(Favorite favorite);
         Task DeleteFavorite(String id);
-        Task<IEnumerable<Lift>> GetAllFavorites();
+        Task<IEnumerable<Favorite>> GetAllFavorites();
         void ValidateFavoriteAttributes(Favorite favorite, ModelStateDictionary ModelState);
     }
 }

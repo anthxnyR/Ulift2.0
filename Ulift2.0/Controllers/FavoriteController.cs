@@ -32,12 +32,5 @@ namespace Ulift2._0.Controllers
             await db.InsertFavorite(favorite);
             return Created("Created", true);
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFavorite(String id)
-        {
-            await db.DeleteFavorite(id);
-            return NoContent();
-        }
     }
 }

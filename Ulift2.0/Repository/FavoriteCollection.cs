@@ -14,23 +14,22 @@ namespace Ulift2._0.Repository
     {
         internal MongoDBRepository _repository = new MongoDBRepository();
         private IMongoCollection<Favorite> Collection;
+
         public FavoriteCollection()
         {
             Collection = _repository.db.GetCollection<Favorite>("Favorites");
         }
+
         public async Task InsertFavorite(Favorite favorite)
         {
             await Collection.InsertOneAsync(favorite);
         }
-        public async Task DeleteFavorite(String id)
-        {
-            var filter = Builders<Favorite>.Filter.Eq(s => s.UserId, new ObjectId(id));
-            await Collection.DeleteOneAsync(filter);
-        }
+
         public async Task<IEnumerable<Favorite>> GetAllFavorites()
         {
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
+
         public void ValidateFavoriteAttributes(Favorite favorite, ModelStateDictionary ModelState)
         {
             if (favorite.UserId == null)

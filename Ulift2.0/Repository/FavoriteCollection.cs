@@ -22,11 +22,6 @@ namespace Ulift2._0.Repository
         {
             await Collection.InsertOneAsync(favorite);
         }
-        public async Task UpdateFavorite(Favorite favorite)
-        {
-            var filter = Builders<Favorite>.Filter.Eq(s => s.UserId, favorite.UserId);
-            await Collection.ReplaceOneAsync(filter, favorite);
-        }
         public async Task DeleteFavorite(String id)
         {
             var filter = Builders<Favorite>.Filter.Eq(s => s.UserId, new ObjectId(id));

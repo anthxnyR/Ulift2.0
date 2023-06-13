@@ -89,7 +89,7 @@ namespace Ulift2._0.Repository
             {
                 var httpclient = new HttpClient();
                 Console.WriteLine(newUser.PhotoURL);
-                httpclient.BaseAddress = new Uri("https://localhost:7007");
+                httpclient.BaseAddress = new Uri("https://ulift.azurewebsites.net");
                 var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
                 var response = await httpclient.PostAsync("/api/User", content);
                 string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";

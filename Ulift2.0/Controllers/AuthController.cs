@@ -12,7 +12,7 @@ using Ulift2._0.Repository;
 using Ulift2._0.Helpers;
 namespace Ulift2._0.Controllers
 {
-
+    //ver si se borra
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]

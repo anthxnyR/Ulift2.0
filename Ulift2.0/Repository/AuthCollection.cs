@@ -98,7 +98,7 @@ namespace Ulift2._0.Repository
                     throw new Exception("El correo electrónico no pertenece al dominio UCAB");
                 }
 
-                if (response.IsSuccessStatusCode)  // No está funcionando (revisar)
+                if (response.IsSuccessStatusCode) 
                 {
                     SendConfirmationEmail(newUser.Email, newUser.Name);
                 }

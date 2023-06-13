@@ -12,8 +12,6 @@ using Ulift2._0.Repository;
 using Ulift2._0.Helpers;
 namespace Ulift2._0.Controllers
 {
-
-    [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : Controller
@@ -43,7 +41,6 @@ namespace Ulift2._0.Controllers
             }
         }
 
-        [EnableCors("MyCorsPolicy")]
         [HttpPost("SignUp")]
         public async Task<IActionResult> Register([FromBody] Models.User user)
         {
@@ -54,6 +51,7 @@ namespace Ulift2._0.Controllers
             await db.Register(user);
             return Created("Created", true);
         }
+
         [HttpGet("Verify")]
         public async Task<IActionResult> Verify(string token)
         {

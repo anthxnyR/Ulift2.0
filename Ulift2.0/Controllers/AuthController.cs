@@ -48,6 +48,7 @@ namespace Ulift2._0.Controllers
             {
                 return BadRequest();
             }
+            //poner mensaje de error
             await db.Register(user);
             return Created("Created", true);
         }

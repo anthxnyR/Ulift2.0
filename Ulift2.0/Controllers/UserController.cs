@@ -13,6 +13,12 @@ namespace Ulift2._0.Controllers
     public class UserController : Controller
     {
         private IUserCollection db = new UserCollection();
+        private readonly ILogger<UserController> _logger;
+        public UserController(ILogger<UserController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {

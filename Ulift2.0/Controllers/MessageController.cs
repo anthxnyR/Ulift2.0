@@ -14,6 +14,13 @@ namespace Ulift2._0.Controllers
     public class MessageController : Controller
     {
         private IMessageCollection db = new MessageCollection();
+        private readonly ILogger<MessageController> _logger;
+
+        public MessageController(ILogger<MessageController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllMessages()
         {

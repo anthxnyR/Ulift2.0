@@ -14,11 +14,17 @@ namespace Ulift2._0.Controllers
     public class FavoriteController : Controller
     {
         private IFavoriteCollection db = new FavoriteCollection();
+        private readonly ILogger<FavoriteController> _logger;
+
+        public FavoriteController(ILogger<FavoriteController> logger)
+        {
+            _logger = logger;
+        }
         
         [HttpGet]
-        public async Task<IActionResult> GetAllFavorites()
+        public async Task<IActionResult> GetAllFavoritesOfAnUser(string UserId)
         {
-            return Ok(await db.GetAllFavorites());
+            return Ok(await db.GetAllFavoritesOfAnUser(UserId));
         }
 
         [HttpPost]

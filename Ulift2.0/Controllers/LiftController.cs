@@ -13,6 +13,13 @@ namespace Ulift2._0.Controllers
     public class LiftController : Controller
     {
         private ILiftCollection db = new LiftCollection();
+        private readonly ILogger<LiftController> _logger;
+
+        public LiftController(ILogger<LiftController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllLifts()
         {

@@ -25,9 +25,10 @@ namespace Ulift2._0.Repository
             await Collection.InsertOneAsync(favorite);
         }
 
-        public async Task<IEnumerable<Favorite>> GetAllFavorites()
+        public async Task<IEnumerable<Favorite>> GetAllFavoritesOfAnUser(string UserId) 
         {
-            return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
+            var filter = Builders<Favorite>.Filter.Eq("UserId", UserId);
+            return await Collection.Find(filter).ToListAsync();
         }
 
         public void ValidateFavoriteAttributes(Favorite favorite, ModelStateDictionary ModelState)

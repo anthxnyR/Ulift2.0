@@ -14,6 +14,13 @@ namespace Ulift2._0.Controllers
     public class DestinationController : Controller
     {
         private IDestinationCollection db = new DestinationCollection();
+        private readonly ILogger<DestinationController> _logger;
+
+        public DestinationController(ILogger<DestinationController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllDestinations()
         {

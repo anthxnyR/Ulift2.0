@@ -119,11 +119,13 @@ namespace Ulift2._0.Repository
             {
                 try
                 {
+
                     var email = JwtService.GetTokenData(token);
                     var filter = Builders<User>.Filter.Eq<string>("Email", email);
                     var update = Builders<User>.Update.Set("ConfirmedUser", true);
+                    Console.WriteLine($"{filter} {update}");
                     var updateResult = await Collection.UpdateOneAsync(filter, update);
-
+                    Console.WriteLine(updateResult.ToString() );
 
                     if (updateResult.MatchedCount > 0)
                     {

@@ -10,7 +10,7 @@ namespace Ulift2._0.Repository
     interface IFavoriteCollection
     {
         Task InsertFavorite(Favorite favorite);
-        Task<IEnumerable<Favorite>> GetAllFavoritesOfAnUser(string UserId);
+        Task<IEnumerable<Favorite>> GetAllFavoritesOfAnUser(string UserEmail);
         void ValidateFavoriteAttributes(Favorite favorite, ModelStateDictionary ModelState);
     }
 }

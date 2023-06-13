@@ -129,7 +129,8 @@ namespace Ulift2._0.Repository
                     {
                         Console.WriteLine("Usuario verificado");
                     }
-                }catch(Exception e)
+                }
+                catch(Exception e)
                 {
                     throw new Exception("El token no es válido");
                 }        

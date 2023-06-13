@@ -15,11 +15,20 @@ using Ulift2._0.Helpers;
 using System.Text;
 using Newtonsoft.Json;
 using Serilog;
+using Ulift2._0.Controllers;
 
 namespace Ulift2._0.Repository
 {
     public class AuthCollection : IAuthCollection
     {
+
+        private readonly ILogger<AuthCollection> _logger;
+
+        public AuthCollection(ILogger<AuthCollection> logger)
+        {
+            _logger = logger;
+        }
+
         internal MongoDBRepository _repository = new MongoDBRepository();
         private IMongoCollection<User> Collection;
 
@@ -117,12 +126,14 @@ namespace Ulift2._0.Repository
         {
             if (!string.IsNullOrEmpty(token))
             {
-                try
-                {
-
+                try {
+                
                     var email = JwtService.GetTokenData(token);
                     var filter = Builders<User>.Filter.Eq<string>("Email", email);
                     var update = Builders<User>.Update.Set("ConfirmedUser", true);
+                    var test = update.ToString();
+                    _logger.LogInformation(test);
+                    
                     var updateResult = await Collection.UpdateOneAsync(filter, update);
 
                     if (updateResult.MatchedCount > 0)

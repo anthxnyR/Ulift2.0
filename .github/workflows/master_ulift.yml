@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'ULift'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_92988EBBB9944BEA8D3B5B08DDD4D20B }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B9A4CDBBE32D4FB981126F1D2ADB07E3 }}
           package: .

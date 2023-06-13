@@ -151,15 +151,19 @@ namespace Ulift2._0.Repository
 
             string tokenMailVerification = JwtService.GetToken(recipientEmail);
 
-            var url = "https://localhost:7007/api/Auth/" + "Verify?token=" + tokenMailVerification;
+            //Cambiar variable url por la el dominio azure
+            var url = "https://ulift.azurewebsites.net/api/Auth/" + "Verify?token=" + tokenMailVerification;
             Console.WriteLine(url);
+
+            string htmlFilePath = @"C:\Users\barri\source\repos\Ulift2.0\Ulift2.0\Assets\EmailConfirmation.html";
+            string htmlBody = System.IO.File.ReadAllText(htmlFilePath);
 
             var mailMessage = new MailMessage
             {
                 From = new MailAddress("fi.ulift@gmail.com", "U-Lift"),
                 Subject = "Confirmación de correo",
-                Body = $"Estimado {recipientName}, \n\nPor favor, confirma tu dirección de correo dando click al siguiente link: \n\n{url}",
-                IsBodyHtml = false
+                Body = htmlBody.Replace("%url%", url).Replace("%USUARIO%", recipientName),
+                IsBodyHtml = true
             };
             mailMessage.To.Add(new MailAddress(recipientEmail));
 

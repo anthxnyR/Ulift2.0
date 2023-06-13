@@ -166,8 +166,8 @@ namespace Ulift2._0.Repository
             var url = "https://ulift.azurewebsites.net/api/Auth/" + "Verify?token=" + tokenMailVerification;
             Console.WriteLine(url);
 
-            string htmlFilePath = @"Ulift2.0/Assets/EmailConfirmation.html";
-            string htmlBody = System.IO.File.ReadAllText(htmlFilePath);
+            string htmlFilePath = @"https://ulift.azurewebsites.net/Assets/EmailConfirmation.html";
+            string htmlBody = File.ReadAllText(htmlFilePath);
 
             var mailMessage = new MailMessage
             {

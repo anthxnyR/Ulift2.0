@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\EmailConfirmation.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\EmailConfirmation.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.NET-Next" Version="4.0.3" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

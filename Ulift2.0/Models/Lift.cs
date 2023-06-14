@@ -11,7 +11,6 @@ namespace Ulift2._0.Models
     {
         [BsonId]
         public ObjectId Id;
-        public String LiftID { get; set; }
         public String Email1 { get; set; }
         public float Rating1 { get; set; }
         public String Email2 { get; set; }

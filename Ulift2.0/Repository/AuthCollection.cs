@@ -131,14 +131,16 @@ namespace Ulift2._0.Repository
                     var email = JwtService.GetTokenData(token);
                     var filter = Builders<User>.Filter.Eq<string>("Email", email);
                     var update = Builders<User>.Update.Set("ConfirmedUser", true);
-                    var test = update.ToString();
-                    _logger.LogInformation(test);
                     
                     var updateResult = await Collection.UpdateOneAsync(filter, update);
 
                     if (updateResult.MatchedCount > 0)
                     {
                         Console.WriteLine("Usuario verificado");
+                    }
+                    else
+                    {
+                        throw new Exception("No se realizo el cambio");
                     }
                 }catch(Exception e)
                 {

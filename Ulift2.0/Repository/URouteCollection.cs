@@ -16,7 +16,7 @@ namespace Ulift2._0.Repository
         private IMongoCollection<URoute> Collection;
         public URouteCollection()
         {
-            Collection = _repository.db.GetCollection<URoute>("URoutes");
+            Collection = _repository.db.GetCollection<URoute>("Routes");
         }
         public async Task InsertRoute(URoute route)
         {

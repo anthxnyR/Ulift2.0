@@ -61,5 +61,23 @@ namespace Ulift2._0.Controllers
             await db.DeleteUser(id);
             return NoContent();
         }
+
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserInformation(string email)
+        {
+            try
+            {
+                var query = await db.GetUserInformation(email);
+                if (query == null)
+                {
+                    return BadRequest();
+                }
+                return Ok(query);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
     }
 }

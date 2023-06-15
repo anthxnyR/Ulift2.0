@@ -14,5 +14,6 @@ namespace Ulift2._0.Repository
         Task DeleteUser (String id);
         Task<IEnumerable<User>> GetAllUsers();
         void ValidateUserAttributes(User user, ModelStateDictionary ModelState);
+        Task<object> GetUserInformation(string email);
     }
 }

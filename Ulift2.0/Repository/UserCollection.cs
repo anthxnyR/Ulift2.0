@@ -60,5 +60,18 @@ namespace Ulift2._0.Repository
                 ModelState.AddModelError("Password", "El usuario debe tener una contraseña asociada");
             }
         }
+
+        public async Task<object> GetUserInformation(string email)
+        {
+            var user = await Collection.Find(u => u.Email == email).FirstOrDefaultAsync();
+            var vehicles = await _repository.db.GetCollection<Vehicle>("Vehicles").Find(v => v.Email == email).ToListAsync();
+            var destinations = await _repository.db.GetCollection<Destination>("Destinations").Find(d => d.Email == email).ToListAsync();
+
+            return new {
+                User = user,
+                Vehicles = vehicles,
+                Destinations = destinations
+            };
+        }
     }
 }

@@ -89,7 +89,8 @@ namespace Ulift2._0.Repository
                 EmergencyContact = request.EmergencyContact,
                 PassengerRating = 0,
                 DriverRating = 0,
-                ConfirmedUser = false
+                ConfirmedUser = false,
+                LiftCount = 0,
             };
 
             

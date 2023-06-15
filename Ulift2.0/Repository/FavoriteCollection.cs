@@ -42,12 +42,26 @@ namespace Ulift2._0.Repository
             IMongoDatabase mongoDatabase = _repository.db;
             IMongoCollection<User> userCollection = mongoDatabase.GetCollection<User>("Users");
 
+            var favFilter = Builders<Favorite>.Filter.And(
+                Builders<Favorite>.Filter.Eq("UserEmail", favorite.UserEmail),
+                Builders<Favorite>.Filter.Eq("FavoriteEmail", favorite.FavoriteEmail)
+            );
+
+            var resultado = Collection.Find(favFilter).FirstOrDefault();
+
+            if (resultado != null)
+            {
+                ModelState.AddModelError("FavoriteEmail", "El usuario ya es su favorito");
+                throw new Exception("El usuario ya es su favorito");
+            }
+
             var filter = Builders<User>.Filter.Eq("Email", favorite.UserEmail);
             if (userCollection.Find(filter).FirstOrDefault() == null)
             {
                 ModelState.AddModelError("UserEmail", "El usuario no existe");
                 throw new Exception("El usuario principal no existe");
             }
+
             filter = Builders<User>.Filter.Eq("Email", favorite.FavoriteEmail);
             if (userCollection.Find(filter).FirstOrDefault() == null)
             {

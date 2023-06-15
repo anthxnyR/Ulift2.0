@@ -10,6 +10,8 @@ namespace Ulift2._0.Models
 {
     public class Favorite
     {
+        [BsonId]
+        public ObjectId Id { get; set; }
         public string UserEmail { get; set; }
         public string FavoriteEmail { get; set; }
     }

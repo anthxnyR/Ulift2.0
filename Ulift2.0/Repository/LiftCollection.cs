@@ -56,11 +56,11 @@ namespace Ulift2._0.Repository
                     throw new Exception("El conductor ya tiene un viaje asociado");
                 }
 
-                //var vehicle = await _repository.db.GetCollection<Vehicle>("Vehicles").FindAsync(x => x.Plate == Lift.Plate && x.Email == Lift.DriverEmail).Result.FirstOrDefaultAsync();
-                //if (vehicle == null)
-                //{
-                //    throw new Exception("El vehiculo no existe");
-                //}
+                var vehicle = await _repository.db.GetCollection<Vehicle>("Vehicles").FindAsync(x => x.Plate == Lift.Plate && x.Email == Lift.DriverEmail).Result.FirstOrDefaultAsync();
+                if (vehicle == null)
+                {
+                    throw new Exception("El vehículo no existe o no está registrado al usuario");
+                }
 
                 var newLift = new Lift
                 {

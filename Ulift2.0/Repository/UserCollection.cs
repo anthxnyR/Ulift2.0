@@ -66,11 +66,13 @@ namespace Ulift2._0.Repository
             var user = await Collection.Find(u => u.Email == email).FirstOrDefaultAsync();
             var vehicles = await _repository.db.GetCollection<Vehicle>("Vehicles").Find(v => v.Email == email).ToListAsync();
             var destinations = await _repository.db.GetCollection<Destination>("Destinations").Find(d => d.Email == email).ToListAsync();
+            var routes = await _repository.db.GetCollection<URoute>("URoutes").Find(r => r.Email == email).ToListAsync();
 
             return new {
                 User = user,
                 Vehicles = vehicles,
-                Destinations = destinations
+                Destinations = destinations,
+                URoutes = routes
             };
         }
     }

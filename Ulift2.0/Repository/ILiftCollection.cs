@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Ulift2._0.Repository
         Task DeleteLift(String id);
         Task<IEnumerable<Lift>> GetAllLifts();
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
+        Task<IActionResult> CreateLift(LiftCreation lift);
     }
 }

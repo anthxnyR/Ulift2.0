@@ -15,11 +15,20 @@ using Ulift2._0.Helpers;
 using System.Text;
 using Newtonsoft.Json;
 using Serilog;
+using Ulift2._0.Controllers;
 
 namespace Ulift2._0.Repository
 {
     public class AuthCollection : IAuthCollection
     {
+
+        private readonly ILogger<AuthCollection> _logger;
+
+        public AuthCollection(ILogger<AuthCollection> logger)
+        {
+            _logger = logger;
+        }
+
         internal MongoDBRepository _repository = new MongoDBRepository();
         private IMongoCollection<User> Collection;
 
@@ -80,7 +89,8 @@ namespace Ulift2._0.Repository
                 EmergencyContact = request.EmergencyContact,
                 PassengerRating = 0,
                 DriverRating = 0,
-                ConfirmedUser = false
+                ConfirmedUser = false,
+                LiftCount = 0,
             };
 
             
@@ -89,7 +99,7 @@ namespace Ulift2._0.Repository
             {
                 var httpclient = new HttpClient();
                 Console.WriteLine(newUser.PhotoURL);
-                httpclient.BaseAddress = new Uri("https://localhost:7007");
+                httpclient.BaseAddress = new Uri("https://ulift.azurewebsites.net");
                 var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
                 var response = await httpclient.PostAsync("/api/User", content);
                 string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
@@ -98,7 +108,7 @@ namespace Ulift2._0.Repository
                     throw new Exception("El correo electrónico no pertenece al dominio UCAB");
                 }
 
-                if (response.IsSuccessStatusCode)  // No está funcionando (revisar)
+                if (response.IsSuccessStatusCode) 
                 {
                     SendConfirmationEmail(newUser.Email, newUser.Name);
                 }
@@ -117,20 +127,23 @@ namespace Ulift2._0.Repository
         {
             if (!string.IsNullOrEmpty(token))
             {
-                try
-                {
+                try {
+                
                     var email = JwtService.GetTokenData(token);
                     var filter = Builders<User>.Filter.Eq<string>("Email", email);
                     var update = Builders<User>.Update.Set("ConfirmedUser", true);
+                    
                     var updateResult = await Collection.UpdateOneAsync(filter, update);
-
 
                     if (updateResult.MatchedCount > 0)
                     {
                         Console.WriteLine("Usuario verificado");
                     }
-                }
-                catch(Exception e)
+                    else
+                    {
+                        throw new Exception("No se realizo el cambio");
+                    }
+                }catch(Exception e)
                 {
                     throw new Exception("El token no es válido");
                 }        
@@ -152,15 +165,19 @@ namespace Ulift2._0.Repository
 
             string tokenMailVerification = JwtService.GetToken(recipientEmail);
 
-            var url = "https://localhost:7007/api/Auth/" + "Verify?token=" + tokenMailVerification;
+            //Cambiar variable url por la el dominio azure
+            var url = "https://ulift.azurewebsites.net/api/Auth/" + "Verify?token=" + tokenMailVerification;
             Console.WriteLine(url);
+
+            string filePath = @"Assets\EmailConfirmation.html";
+            string htmlBody = File.ReadAllText(filePath);
 
             var mailMessage = new MailMessage
             {
                 From = new MailAddress("fi.ulift@gmail.com", "U-Lift"),
                 Subject = "Confirmación de correo",
-                Body = $"Estimado {recipientName}, \n\nPor favor, confirma tu dirección de correo dando click al siguiente link: \n\n{url}",
-                IsBodyHtml = false
+                Body = htmlBody.Replace("%url%", url).Replace("%USUARIO%", recipientName),
+                IsBodyHtml = true
             };
             mailMessage.To.Add(new MailAddress(recipientEmail));
 

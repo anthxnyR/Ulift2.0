@@ -11,13 +11,18 @@ namespace Ulift2._0.Models
     {
         [BsonId]
         public ObjectId Id;
-        public String LiftID { get; set; }
         public String Email1 { get; set; }
+        public float Rating1 { get; set; }
         public String Email2 { get; set; }
+        public float Rating2 { get; set; }
         public String Email3 { get; set; }
+        public float Rating3 { get; set; }
         public String Email4 { get; set; }
+        public float Rating4 { get; set; }
         public String Email5 { get; set; }
+        public float Rating5 { get; set; }
         public String DriverEmail { get; set; }
+        public float DriverRating { get; set; }
         public String Status { get; set; }
         public String Plate { get; set; }
         public String Route { get; set; }

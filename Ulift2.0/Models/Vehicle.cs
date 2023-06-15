@@ -16,7 +16,5 @@ namespace Ulift2._0.Models
         public String Color { get; set; }
         public String Model { get; set; }
         public int Seats { get; set; }
-
-
     }
 }

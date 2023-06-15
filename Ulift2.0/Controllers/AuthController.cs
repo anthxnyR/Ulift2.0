@@ -17,6 +17,12 @@ namespace Ulift2._0.Controllers
     public class AuthController : Controller
     {
         private IAuthCollection db = new AuthCollection();
+        private readonly ILogger<AuthController> _logger;
+
+        public AuthController(ILogger<AuthController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] Login user)

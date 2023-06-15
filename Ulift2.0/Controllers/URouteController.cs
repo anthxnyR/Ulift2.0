@@ -13,6 +13,13 @@ namespace Ulift2._0.Controllers
     public class URouteController : Controller
     {
         private IURouteCollection db = new URouteCollection();
+        private readonly ILogger<URouteController> _logger;
+
+        public URouteController(ILogger<URouteController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllRoutes()
         {

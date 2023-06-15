@@ -13,6 +13,13 @@ namespace Ulift2._0.Controllers
     public class VehicleController : Controller
     {
         private IVehicleCollection db = new VehicleCollection();
+        private readonly ILogger<VehicleController> _logger;
+
+        public VehicleController(ILogger<VehicleController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllVehicles()
         {
@@ -23,10 +30,12 @@ namespace Ulift2._0.Controllers
         {
             if (vehicle == null)
             {
+                _logger.LogInformation("Vehicle null");
                 return BadRequest();
             }
             db.ValidateVehicleAttributes(vehicle, ModelState);
             await db.InsertVehicle(vehicle);
+            _logger.LogInformation("Vehicle inserted");
             return Created("Created", true);
         }
         [HttpPut]

@@ -54,5 +54,10 @@ namespace Ulift2._0.Controllers
             await db.DeleteDestination(id);
             return NoContent();
         }
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserDestinations(String email)
+        {
+            return Ok(await db.GetUserDestinations(email));
+        }
     }
 }

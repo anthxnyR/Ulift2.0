@@ -13,6 +13,7 @@ namespace Ulift2._0.Repository
         Task UpdateVehicle(Vehicle vehicle);
         Task DeleteVehicle(String id);
         Task<IEnumerable<Vehicle>> GetAllVehicles();
+        Task<IEnumerable<Vehicle>> GetUserVehicles(String userEmail);
         void ValidateVehicleAttributes(Vehicle vehicle, ModelStateDictionary ModelState);
     }
 }

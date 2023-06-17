@@ -36,6 +36,11 @@ namespace Ulift2._0.Repository
         {
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
+        public async Task<IEnumerable<Vehicle>> GetUserVehicles(String userEmail)
+        {
+            var filter = Builders<Vehicle>.Filter.Eq(s => s.Email, userEmail);
+            return await Collection.FindAsync(filter).Result.ToListAsync();
+        }
         public void ValidateVehicleAttributes(Vehicle vehicle, ModelStateDictionary ModelState)
         {
             if (vehicle.Email == null)

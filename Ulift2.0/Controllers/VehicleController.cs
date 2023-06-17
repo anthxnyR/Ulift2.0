@@ -55,5 +55,10 @@ namespace Ulift2._0.Controllers
             await db.DeleteVehicle(id);
             return NoContent();
         }
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserVehicles(String email)
+        {
+            return Ok(await db.GetUserVehicles(email));
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Ulift2._0.Repository
         Task UpdateDestination (Destination destination);
         Task DeleteDestination (String id);
         Task<IEnumerable<Destination>> GetAllDestinations();
+        Task<IEnumerable<Destination>> GetUserDestinations(String email);
         void ValidateDestinationAttributes(Destination destination, ModelStateDictionary ModelState);
     }
 }

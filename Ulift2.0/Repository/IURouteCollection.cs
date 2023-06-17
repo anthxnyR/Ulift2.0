@@ -13,6 +13,7 @@ namespace Ulift2._0.Repository
         Task UpdateRoute(URoute route);
         Task DeleteRoute(String id);
         Task<IEnumerable<URoute>> GetAllRoutes();
+        Task<IEnumerable<URoute>> GetUserRoutes(String email);
         void ValidateRouteAttributes(URoute route, ModelStateDictionary ModelState);
     }
 }

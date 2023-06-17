@@ -53,5 +53,10 @@ namespace Ulift2._0.Controllers
             await db.DeleteRoute(id);
             return NoContent();
         }
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserRoutes(String email)
+        {
+            return Ok(await db.GetUserRoutes(email));
+        }
     }
 }

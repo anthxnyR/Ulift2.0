@@ -37,6 +37,11 @@ namespace Ulift2._0.Repository
         {
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
+        public async Task<IEnumerable<Destination>> GetUserDestinations(String email)
+        {
+            var filter = Builders<Destination>.Filter.Eq(s => s.Email, email);
+            return await Collection.FindAsync(filter).Result.ToListAsync();
+        }
         public void ValidateDestinationAttributes(Destination destination, ModelStateDictionary ModelState)
         {
             if (destination.Lat == 0)

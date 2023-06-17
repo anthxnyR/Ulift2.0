@@ -36,6 +36,11 @@ namespace Ulift2._0.Repository
         {
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
+        public async Task<IEnumerable<URoute>> GetUserRoutes(String email)
+        {
+            var filter = Builders<URoute>.Filter.Eq(s => s.Email, email);
+            return await Collection.FindAsync(filter).Result.ToListAsync();
+        }
         public void ValidateRouteAttributes(URoute route, ModelStateDictionary ModelState)
         {
             if (route.Path == null)

@@ -53,13 +53,13 @@ namespace Ulift2._0.Controllers
             await db.DeleteLift(id);
             return NoContent();
         }
-        [HttpPost("/Create")]
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateLift([FromBody] Models.LiftCreation lift)
         {
             var response = await db.CreateLift(lift);
             if (response is BadRequestObjectResult badRequestResult)
             {
-                return BadRequest("El usuario no ha podido ser creado");
+                return BadRequest("El viaje no ha podido ser creado");
             }
             return Created("Lift Created", true);
         }

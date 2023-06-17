@@ -27,7 +27,7 @@ namespace Ulift2._0.Models
         public String Plate { get; set; }
         public String Route { get; set; }
         public int Seats { get; set; }
-        public DateTime WaitingTime { get; set; }
+        public int WaitingTime { get; set; }
 
     }   
 }

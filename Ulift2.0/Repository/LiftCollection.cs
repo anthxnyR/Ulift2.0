@@ -70,7 +70,7 @@ namespace Ulift2._0.Repository
                     Plate = Lift.Plate,
                     Route = Lift.Route,
                     Seats = Lift.Seats,
-                    WaitingTime = 0,
+                    WaitingTime = Lift.WaitingTime,
                     Email1 = "",
                     Email2 = "",
                     Email3 = "",

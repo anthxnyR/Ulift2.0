@@ -93,6 +93,11 @@ namespace Ulift2._0.Repository
 
         }
 
+        public async Task<IEnumerable<Lift>> GetAvailableLifts()
+        {
+            return await Collection.FindAsync(x => x.Status == "A" ).Result.ToListAsync();
+        }
+
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {
             //if (lift.LiftID == null)

@@ -14,6 +14,7 @@ namespace Ulift2._0.Repository
         Task UpdateLift(Lift lift);
         Task DeleteLift(String id);
         Task<IEnumerable<Lift>> GetAllLifts();
+        Task<IEnumerable<Lift>> GetAvailableLifts();
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
         Task<IActionResult> CreateLift(LiftCreation lift);
     }

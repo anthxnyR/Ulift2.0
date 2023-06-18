@@ -63,5 +63,10 @@ namespace Ulift2._0.Controllers
             }
             return Created("Lift Created", true);
         }
+        [HttpGet("Available")]
+        public async Task<IActionResult> GetAvailableLifts()
+        {
+            return Ok(await db.GetAvailableLifts());
+        }
     }
 }

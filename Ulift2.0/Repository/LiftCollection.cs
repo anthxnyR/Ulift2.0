@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Authentication;
 using MongoDB.Bson.IO;
 using Newtonsoft.Json;
+using Ulift2._0.Helpers;
 
 namespace Ulift2._0.Repository
 {
@@ -97,6 +98,51 @@ namespace Ulift2._0.Repository
         {
             return await Collection.FindAsync(x => x.Status == "A" ).Result.ToListAsync();
         }
+
+        // public async Task<IEnumerable<Lift>> GetMatch(double lon, double lat, bool wOnly, int maxD)
+        // {
+        //     var activeRoutes = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => true).Result.ToListAsync();
+
+        //     // if (wOnly)
+        //     // {
+        //     //     lifts = lifts.Where(x => x.WaitingTime > 0).ToList();
+        //     // }
+
+        //     if (lat == 0 && lon == 0)
+        //     {
+        //         return activeRoutes;
+        //     }
+        //     var activeLifts = await _lifts.Aggregate()
+        //         .Lookup("users", "driverEmail", "email", "driver")
+        //         .Match(Builders<Lift>.Filter.And(
+        //             Builders<Lift>.Filter.Eq("status", "A"),
+        //             Builders<Lift>.Filter.Eq("route.active", true),
+        //             Builders<Lift>.Filter.Eq("complete", false)
+        //         ))
+        //         .Project(lift => new LiftProjection
+        //         {
+        //             LiftID = lift.Id.ToString(),
+        //             DriverEmail = lift.DriverEmail,
+        //             DriverName = lift.Driver.Name,
+        //             DriverPhotoURL = lift.Driver.PhotoURL,
+        //             WaitingTime = lift.WaitingTime,
+        //             Seats = lift.Seats,
+        //             Plate = lift.Plate,
+        //             RouteName = lift.Route,
+        //             Date = lift.DateL,
+        //             Time = lift.TimeL,
+        //             DriverRating = lift.DriverRating,
+        //             Ratings = new List<RatingProjection>
+        //             {
+        //                 new RatingProjection { Email = lift.Email1, Rating = lift.Rating1 },
+        //                 new RatingProjection { Email = lift.Email2, Rating = lift.Rating2 },
+        //                 new RatingProjection { Email = lift.Email3, Rating = lift.Rating3 },
+        //                 new RatingProjection { Email = lift.Email4, Rating = lift.Rating4 },
+        //                 new RatingProjection { Email = lift.Email5, Rating = lift.Rating5 }
+        //             }
+        //         })
+        //         .ToListAsync();
+        // }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

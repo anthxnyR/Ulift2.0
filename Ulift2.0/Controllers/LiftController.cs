@@ -68,5 +68,17 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAvailableLifts());
         }
+
+        // [HttpGet("{lat}/{lng}/{wOnly}/{maxD}")]
+        // public async Task<IActionResult> GetMatch()
+        // {
+        //     double lat = double.Parse(Request.Query["lat"]);
+        //     double lng = double.Parse(Request.Query["lng"]);
+        //     bool wOnly = bool.Parse(Request.Query["wOnly"]);
+        //     int maxD = int.Parse(Request.Query["maxD"]);
+
+        //     var lifts = await db.GetMatch(lat, lng, wOnly, maxD);
+        //     return Ok();
+        // }
     }
 }

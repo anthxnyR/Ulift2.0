@@ -17,5 +17,6 @@ namespace Ulift2._0.Repository
         Task<IEnumerable<Lift>> GetAvailableLifts();
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
         Task<IActionResult> CreateLift(LiftCreation lift);
+        // Task<IEnumerable<Lift>> GetMatch(double lon, double lat, bool wOnly, int maxD);
     }
 }

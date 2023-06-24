@@ -16,6 +16,8 @@ using System.Text;
 using Newtonsoft.Json;
 using Serilog;
 using Ulift2._0.Controllers;
+using MongoDB.Driver.Core.Configuration;
+using Azure.Storage.Blobs;
 
 namespace Ulift2._0.Repository
 {
@@ -69,12 +71,11 @@ namespace Ulift2._0.Repository
             return true;
         }
         
-        public async Task Register ([FromBody] User request)
+        public async Task Register ([FromBody] User request, IFormFile photo)
         {
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
             string hash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt);
-
 
 
             var newUser = new User
@@ -83,7 +84,6 @@ namespace Ulift2._0.Repository
                 Password = hash,
                 Name = request.Name,
                 LastName = request.LastName,
-                PhotoURL = request.PhotoURL,
                 Gender = request.Gender,
                 Role = request.Role,
                 EmergencyContact = request.EmergencyContact,
@@ -110,6 +110,18 @@ namespace Ulift2._0.Repository
 
                 if (response.IsSuccessStatusCode) 
                 {
+                    string blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=uliftstorage;AccountKey=2NPgmVZDZC/ZEqkJtj4ImFPzsabZArnWcd/Pck8dB0R6GSL16AvxrRXnu//Bke9E3RYpRrXLQ7qx+AStIw6MUQ==;EndpointSuffix=core.windows.net";
+                    string blobContainerName = "profilepictures";
+                    string blobFileName = newUser.Email + ".jpg";
+                    BlobContainerClient containerClient = new BlobContainerClient(blobConnectionString, blobContainerName);
+
+                    using (Stream stream = photo.OpenReadStream())
+                    {
+                        await containerClient.UploadBlobAsync(blobFileName, stream);
+                    }
+
+                    newUser.PhotoURL = containerClient.Uri + "/" + blobFileName;
+
                     SendConfirmationEmail(newUser.Email, newUser.Name);
                 }
                 else

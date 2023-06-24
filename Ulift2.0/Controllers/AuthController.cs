@@ -48,16 +48,24 @@ namespace Ulift2._0.Controllers
         }
 
         [HttpPost("SignUp")]
-        public async Task<IActionResult> Register([FromBody] Models.User user)
+        public async Task<IActionResult> Register([FromBody] Models.User user, IFormFile photo)
         {
             if (user == null)
             {
                 return BadRequest();
             }
-            //poner mensaje de error
-            await db.Register(user);
-            return Created("Created", true);
+
+            try
+            {
+                await db.Register(user, photo);
+                return Created("Created", true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
+
         [HttpGet("Verify")]
         public async Task<IActionResult> Verify(string token)
         {

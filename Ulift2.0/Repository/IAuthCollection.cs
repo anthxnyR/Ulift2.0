@@ -10,7 +10,7 @@ namespace Ulift2._0.Repository
     public interface IAuthCollection
     {
         Task<bool> Login(string email, string password);
-        Task Register(User user);
+        Task Register(User user, IFormFile photo);
         Task Verify(string Token);
         void SendConfirmationEmail(String recipientEmail, string recipientName);
         // string SaveImage(IFormFile file);

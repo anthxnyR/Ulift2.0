@@ -71,7 +71,7 @@ namespace Ulift2._0.Repository
             return true;
         }
         
-        public async Task Register ([FromBody] User request, IFormFile photo)
+        public async Task Register ([FromForm] Register request)
         {
             Console.WriteLine(request);
             string salt = BCrypt.Net.BCrypt.GenerateSalt(10);
@@ -100,40 +100,38 @@ namespace Ulift2._0.Repository
                 var httpclient = new HttpClient();
                 Console.WriteLine(newUser.PhotoURL);
                 httpclient.BaseAddress = new Uri("https://ulift.azurewebsites.net");
-                var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
-                var response = await httpclient.PostAsync("/api/User", content);
                 string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
                 if (!Regex.IsMatch(newUser.Email, domainPattern, RegexOptions.IgnoreCase))
                 {
                     throw new Exception("El correo electrónico no pertenece al dominio UCAB");
                 }
+                string blobFileName = newUser.Email + ".jpg";
 
-                if (response.IsSuccessStatusCode) 
+                string blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=uliftstorage;AccountKey=2NPgmVZDZC/ZEqkJtj4ImFPzsabZArnWcd/Pck8dB0R6GSL16AvxrRXnu//Bke9E3RYpRrXLQ7qx+AStIw6MUQ==;EndpointSuffix=core.windows.net";
+                string blobContainerName = "profilepictures";
+                BlobContainerClient containerClient = new BlobContainerClient(blobConnectionString, blobContainerName);
+
+                using (Stream stream = request.Photo.OpenReadStream())
                 {
-                    string blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=uliftstorage;AccountKey=2NPgmVZDZC/ZEqkJtj4ImFPzsabZArnWcd/Pck8dB0R6GSL16AvxrRXnu//Bke9E3RYpRrXLQ7qx+AStIw6MUQ==;EndpointSuffix=core.windows.net";
-                    string blobContainerName = "profilepictures";
-                    string blobFileName = newUser.Email + ".jpg";
-                    BlobContainerClient containerClient = new BlobContainerClient(blobConnectionString, blobContainerName);
-
-                    using (Stream stream = photo.OpenReadStream())
-                    {
-                        await containerClient.UploadBlobAsync(blobFileName, stream);
-                    }
-
-                    newUser.PhotoURL = containerClient.Uri + "/" + blobFileName;
-
-                    SendConfirmationEmail(newUser.Email, newUser.Name);
+                    await containerClient.UploadBlobAsync(blobFileName, stream);
                 }
-                else
+
+                newUser.PhotoURL = containerClient.Uri + "/" + blobFileName;
+                var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
+                Console.WriteLine($"{newUser.PhotoURL}");
+                var response = await httpclient.PostAsync("/api/User", content);
+                if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception("El usuario no pudo ser registrado");
-                }  
+                    throw new Exception("No se pudo registrar el usuario");
+                }
+                SendConfirmationEmail(newUser.Email, newUser.Name);
             }
             else
             {
                 throw new Exception("El usuario ya existe");
             }
         }
+
 
         public async Task Verify(string token)
         {

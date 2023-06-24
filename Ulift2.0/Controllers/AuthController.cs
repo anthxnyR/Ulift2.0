@@ -48,7 +48,7 @@ namespace Ulift2._0.Controllers
         }
 
         [HttpPost("SignUp")]
-        public async Task<IActionResult> Register([FromBody] Models.User user, IFormFile photo)
+        public async Task<IActionResult> Register([FromForm] Register user)
         {
             if (user == null)
             {
@@ -57,7 +57,7 @@ namespace Ulift2._0.Controllers
 
             try
             {
-                await db.Register(user, photo);
+                await db.Register(user);
                 return Created("Created", true);
             }
             catch (Exception ex)

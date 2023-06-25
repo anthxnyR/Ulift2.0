@@ -13,7 +13,8 @@ using MongoDB.Bson.IO;
 using Newtonsoft.Json;
 using Ulift2._0.Helpers;
 using MongoDB.Bson.Serialization;
-
+using Newtonsoft.Json;
+using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Ulift2._0.Repository
 {
@@ -182,12 +183,15 @@ namespace Ulift2._0.Repository
             {
                 foreach (var activeRoute in activeRoutes)
                 {
-                    foreach (var node in activeRoute.Route.Path)
+                    var data_string = activeRoute.Route.Path;
+                    List<Coordinates> coordinatesList = new List<Coordinates>();
+                    coordinatesList = JsonConvert.DeserializeObject<List<Coordinates>>(data_string);
+                    foreach (var node in coordinatesList)
                     {
                         var distance = Distance.CalculateDistance(node, destination);
                         if (distance <= maxD)
                         {
-                            distances[(activeRoute.Lift, activeRoute.Vehicle)] = Distance.CalculateDistance(activeRoute.Route.Path.Last(), destination);
+                            distances[(activeRoute.Lift, activeRoute.Vehicle)] = Distance.CalculateDistance(coordinatesList.Last(), destination);
                             optimizedRoutes.Add(activeRoute);
                             break;
                         }

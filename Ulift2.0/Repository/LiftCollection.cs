@@ -12,6 +12,7 @@ using MongoDB.Driver.Core.Authentication;
 using MongoDB.Bson.IO;
 using Newtonsoft.Json;
 using Ulift2._0.Helpers;
+using MongoDB.Bson.Serialization;
 
 namespace Ulift2._0.Repository
 {
@@ -94,55 +95,82 @@ namespace Ulift2._0.Repository
 
         }
 
-        public async Task<IEnumerable<Lift>> GetAvailableLifts()
+        public async Task<List<(Lift, User, URoute, Vehicle)>> GetAvailableLifts()
         {
-            return await Collection.FindAsync(x => x.Status == "A" ).Result.ToListAsync();
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
+
+            var pipeline = new BsonDocument[]
+            {
+                BsonDocument.Parse("{$match: {Status: 'A'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'users', localField: 'DriverEmail', foreignField: 'Email', as: 'Driver'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'uroutes', localField: 'Route', foreignField: 'Path', as: 'Route'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'vehicles', localField: 'Plate', foreignField: 'Plate', as: 'Vehicle'}}"),
+                BsonDocument.Parse("{$unwind: '$Driver'}"),
+                BsonDocument.Parse("{$unwind: '$Route'}"),
+                BsonDocument.Parse("{$unwind: '$Vehicle'}"),
+                BsonDocument.Parse("{$project: {Lift: '$$ROOT', Driver: '$Driver', Route: '$Route', Vehicle: '$Vehicle'}}")
+            };
+
+            var aggregateOptions = new AggregateOptions { AllowDiskUse = true };
+
+            var cursor = await Collection.AggregateAsync<BsonDocument>(pipeline, aggregateOptions);
+
+            var lifts = new List<(Lift, User, URoute, Vehicle)>();
+
+            await cursor.ForEachAsync(document =>
+            {
+                var lift = BsonSerializer.Deserialize<Lift>(document["Lift"].AsBsonDocument);
+                var driver = BsonSerializer.Deserialize<User>(document["Driver"].AsBsonDocument);
+                var route = BsonSerializer.Deserialize<URoute>(document["Route"].AsBsonDocument);
+                var vehicle = BsonSerializer.Deserialize<Vehicle>(document["Vehicle"].AsBsonDocument);
+
+                lifts.Add((lift, driver, route, vehicle));
+            });
+
+            return lifts;
         }
 
-        // public async Task<IEnumerable<Lift>> GetMatch(double lon, double lat, bool wOnly, int maxD)
-        // {
-        //     var activeRoutes = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => true).Result.ToListAsync();
+        public async Task<List<(Lift, User, URoute, Vehicle)>> GetMatch(double lat, double lng, bool wOnly, int maxD)
+        {
+            var destination = new { lat, lng };
+            var activeRoutes = await GetAvailableLifts();
 
-        //     // if (wOnly)
-        //     // {
-        //     //     lifts = lifts.Where(x => x.WaitingTime > 0).ToList();
-        //     // }
+            if (wOnly)
+            {
+                activeRoutes = activeRoutes.Where(route => route.Item2.Gender == "F").ToList();
+            }
 
-        //     if (lat == 0 && lon == 0)
-        //     {
-        //         return activeRoutes;
-        //     }
-        //     var activeLifts = await _lifts.Aggregate()
-        //         .Lookup("users", "driverEmail", "email", "driver")
-        //         .Match(Builders<Lift>.Filter.And(
-        //             Builders<Lift>.Filter.Eq("status", "A"),
-        //             Builders<Lift>.Filter.Eq("route.active", true),
-        //             Builders<Lift>.Filter.Eq("complete", false)
-        //         ))
-        //         .Project(lift => new LiftProjection
-        //         {
-        //             LiftID = lift.Id.ToString(),
-        //             DriverEmail = lift.DriverEmail,
-        //             DriverName = lift.Driver.Name,
-        //             DriverPhotoURL = lift.Driver.PhotoURL,
-        //             WaitingTime = lift.WaitingTime,
-        //             Seats = lift.Seats,
-        //             Plate = lift.Plate,
-        //             RouteName = lift.Route,
-        //             Date = lift.DateL,
-        //             Time = lift.TimeL,
-        //             DriverRating = lift.DriverRating,
-        //             Ratings = new List<RatingProjection>
-        //             {
-        //                 new RatingProjection { Email = lift.Email1, Rating = lift.Rating1 },
-        //                 new RatingProjection { Email = lift.Email2, Rating = lift.Rating2 },
-        //                 new RatingProjection { Email = lift.Email3, Rating = lift.Rating3 },
-        //                 new RatingProjection { Email = lift.Email4, Rating = lift.Rating4 },
-        //                 new RatingProjection { Email = lift.Email5, Rating = lift.Rating5 }
-        //             }
-        //         })
-        //         .ToListAsync();
-        // }
+            var optRoutes = new List<(Lift, User, URoute, Vehicle)>();
+            var distances = new Dictionary<(Lift, Vehicle), double>(); // Almacenar distancias
+
+            if (maxD != 0)
+            {
+                foreach (var activeRoute in activeRoutes)
+                {
+                    foreach (var node in activeRoute.Item3.Path)
+                    {
+                        var distance = Distance.CalculateDistance(node, destination);
+                        if (distance <= maxD)
+                        {
+                            distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
+                            optRoutes.Add(activeRoute);
+                            break;
+                        }
+                    }
+                }
+                optRoutes = optRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
+                return optRoutes;
+            }
+            else
+            {
+                foreach (var activeRoute in activeRoutes)
+                {
+                    distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
+                }
+                activeRoutes = activeRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();    
+                return activeRoutes;
+            }
+        }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

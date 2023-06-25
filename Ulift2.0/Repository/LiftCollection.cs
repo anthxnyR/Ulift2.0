@@ -140,8 +140,8 @@ namespace Ulift2._0.Repository
                 activeRoutes = activeRoutes.Where(route => route.Item2.Gender == "F").ToList();
             }
 
-            var optRoutes = new List<(Lift, User, URoute, Vehicle)>();
-            var distances = new Dictionary<(Lift, Vehicle), double>(); // Almacenar distancias
+            var optimizedRoutes = new List<(Lift, User, URoute, Vehicle)>();
+            var distances = new Dictionary<(Lift, Vehicle), double>();
 
             if (maxD != 0)
             {
@@ -153,13 +153,13 @@ namespace Ulift2._0.Repository
                         if (distance <= maxD)
                         {
                             distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
-                            optRoutes.Add(activeRoute);
+                            optimizedRoutes.Add(activeRoute);
                             break;
                         }
                     }
                 }
-                optRoutes = optRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
-                return optRoutes;
+                optimizedRoutes = optimizedRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
+                return optimizedRoutes;
             }
             else
             {
@@ -167,10 +167,11 @@ namespace Ulift2._0.Repository
                 {
                     distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
                 }
-                activeRoutes = activeRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();    
+                activeRoutes = activeRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
                 return activeRoutes;
             }
         }
+
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

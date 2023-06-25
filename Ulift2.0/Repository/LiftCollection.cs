@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Authentication;
 using MongoDB.Bson.IO;
 using Newtonsoft.Json;
+using Ulift2._0.Helpers;
+using MongoDB.Bson.Serialization;
 
 namespace Ulift2._0.Repository
 {
@@ -93,10 +95,83 @@ namespace Ulift2._0.Repository
 
         }
 
-        public async Task<IEnumerable<Lift>> GetAvailableLifts()
+        public async Task<List<(Lift, User, URoute, Vehicle)>> GetAvailableLifts()
         {
-            return await Collection.FindAsync(x => x.Status == "A" ).Result.ToListAsync();
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
+
+            var pipeline = new BsonDocument[]
+            {
+                BsonDocument.Parse("{$match: {Status: 'A'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'users', localField: 'DriverEmail', foreignField: 'Email', as: 'Driver'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'uroutes', localField: 'Route', foreignField: 'Path', as: 'Route'}}"),
+                BsonDocument.Parse("{$lookup: {from: 'vehicles', localField: 'Plate', foreignField: 'Plate', as: 'Vehicle'}}"),
+                BsonDocument.Parse("{$unwind: '$Driver'}"),
+                BsonDocument.Parse("{$unwind: '$Route'}"),
+                BsonDocument.Parse("{$unwind: '$Vehicle'}"),
+                BsonDocument.Parse("{$project: {Lift: '$$ROOT', Driver: '$Driver', Route: '$Route', Vehicle: '$Vehicle'}}")
+            };
+
+            var aggregateOptions = new AggregateOptions { AllowDiskUse = true };
+
+            var cursor = await Collection.AggregateAsync<BsonDocument>(pipeline, aggregateOptions);
+
+            var lifts = new List<(Lift, User, URoute, Vehicle)>();
+
+            await cursor.ForEachAsync(document =>
+            {
+                var lift = BsonSerializer.Deserialize<Lift>(document["Lift"].AsBsonDocument);
+                var driver = BsonSerializer.Deserialize<User>(document["Driver"].AsBsonDocument);
+                var route = BsonSerializer.Deserialize<URoute>(document["Route"].AsBsonDocument);
+                var vehicle = BsonSerializer.Deserialize<Vehicle>(document["Vehicle"].AsBsonDocument);
+
+                lifts.Add((lift, driver, route, vehicle));
+            });
+
+            return lifts;
         }
+
+        public async Task<List<(Lift, User, URoute, Vehicle)>> GetMatch(double lat, double lng, bool wOnly, int maxD)
+        {
+            var destination = new { lat, lng };
+            var activeRoutes = await GetAvailableLifts();
+
+            if (wOnly)
+            {
+                activeRoutes = activeRoutes.Where(route => route.Item2.Gender == "F").ToList();
+            }
+
+            var optimizedRoutes = new List<(Lift, User, URoute, Vehicle)>();
+            var distances = new Dictionary<(Lift, Vehicle), double>();
+
+            if (maxD != 0)
+            {
+                foreach (var activeRoute in activeRoutes)
+                {
+                    foreach (var node in activeRoute.Item3.Path)
+                    {
+                        var distance = Distance.CalculateDistance(node, destination);
+                        if (distance <= maxD)
+                        {
+                            distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
+                            optimizedRoutes.Add(activeRoute);
+                            break;
+                        }
+                    }
+                }
+                optimizedRoutes = optimizedRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
+                return optimizedRoutes;
+            }
+            else
+            {
+                foreach (var activeRoute in activeRoutes)
+                {
+                    distances[(activeRoute.Item1, activeRoute.Item4)] = Distance.CalculateDistance(activeRoute.Item3.Path.Last(), destination);
+                }
+                activeRoutes = activeRoutes.OrderBy(route => distances[(route.Item1, route.Item4)]).ToList();
+                return activeRoutes;
+            }
+        }
+
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

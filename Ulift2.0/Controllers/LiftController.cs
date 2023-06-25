@@ -68,5 +68,46 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAvailableLifts());
         }
+
+        [HttpGet("{lat}/{lng}/{wOnly}/{maxD}")]
+        public async Task<IActionResult> GetMatch(double lat, double lng, bool wOnly, int maxD)
+        {
+            try
+            {
+                if (lat == 0 && lng == 0)
+                {
+                    return Ok(await db.GetAvailableLifts());
+                }
+
+                var lifts = await db.GetMatch(lat, lng, wOnly, maxD);
+
+                if (lifts == null)
+                {
+                    throw new Exception("No se han encontrado viajes");
+                }
+
+                if (lifts.Count > 0)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "optimal routes",
+                        lifts = lifts
+                    });
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "no active lifts",
+                    });
+                }
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Error");
+            }
+        }
     }
 }

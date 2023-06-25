@@ -28,6 +28,5 @@ namespace Ulift2._0.Models
         public String Route { get; set; }
         public int Seats { get; set; }
         public int WaitingTime { get; set; }
-
     }   
 }

@@ -64,19 +64,31 @@ namespace Ulift2._0.Controllers
             return Created("Lift Created", true);
         }
         [HttpGet("Available")]
-        public async Task<IActionResult> GetAvailableLifts()
+        public async Task<IActionResult> GetAvailableLiftsByDriverGender(bool wOnly)
         {
-            return Ok(await db.GetAvailableLifts());
+            var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly);
+            
+            foreach (var lift in availableLifts)
+            {
+                _logger.LogInformation($"Driver Name: {lift.Driver.Gender}");
+                _logger.LogInformation("");
+            }
+            return Ok(availableLifts);
         }
 
-        [HttpGet("{lat}/{lng}/{wOnly}/{maxD}")]
+       [HttpGet("{lat}/{lng}/{wOnly}/{maxD}")]
         public async Task<IActionResult> GetMatch(double lat, double lng, bool wOnly, int maxD)
         {
             try
             {
+                // var lat = double.Parse(Request.Query["lat"]);
+                // var lng = double.Parse(Request.Query["lng"]);
+                // var wOnly = bool.Parse(Request.Query["wOnly"]);
+                // var maxD = int.Parse(Request.Query["maxD"]);
                 if (lat == 0 && lng == 0)
                 {
-                    return Ok(await db.GetAvailableLifts(wOnly));
+                    var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly);
+                    return Ok(availableLifts);
                 }
 
                 var lifts = await db.GetMatch(lat, lng, wOnly, maxD);
@@ -92,7 +104,7 @@ namespace Ulift2._0.Controllers
                     {
                         success = true,
                         message = "optimal routes",
-                        lifts = lifts
+                        lifts
                     });
                 }
                 else
@@ -104,7 +116,7 @@ namespace Ulift2._0.Controllers
                     });
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw new Exception("Error");
             }

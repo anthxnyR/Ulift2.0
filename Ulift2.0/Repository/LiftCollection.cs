@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Ulift2._0.Helpers;
 using MongoDB.Bson.Serialization;
 
+
 namespace Ulift2._0.Repository
 {
     public class LiftCollection : ILiftCollection
@@ -93,54 +94,86 @@ namespace Ulift2._0.Repository
             }
         }
 
-        // make a method that list all lift available
+        // make a method that list all lift availableusing MongoDB.Bson;
+
         public async Task<List<AvailableLift>> GetAvailableLifts()
         {
             var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
-            var lifts = await Collection.FindAsync(filter).Result.ToListAsync();
+            var liftsCursor = await Collection.FindAsync(filter);
+            var lifts = await liftsCursor.ToListAsync();
+
+            if (lifts == null || !lifts.Any())
+            {
+                return new List<AvailableLift>();
+            }
+
+            var liftDriverEmail = lifts.Select(lift => lift.DriverEmail).ToList();
 
             var users = _repository.db.GetCollection<User>("Users");
-            var routes = _repository.db.GetCollection<URoute>("URoutes");
+            var driversCursor = await users.Find(user => liftDriverEmail.Contains(user.Email)).ToListAsync();
+            var drivers = driversCursor.ToList();
+
+            var routes = _repository.db.GetCollection<URoute>("Routes");
+            var routeNamesCursor = await routes.Find(uroute => liftDriverEmail.Contains(uroute.Email)).ToListAsync();
+            var routeNames = routeNamesCursor.ToList();
+
             var vehicles = _repository.db.GetCollection<Vehicle>("Vehicles");
+            var vehiclePlatesCursor = await vehicles.Find(vehicle => liftDriverEmail.Contains(vehicle.Email)).ToListAsync();
+            var vehiclePlates = vehiclePlatesCursor.ToList();
 
             var liftsList = new List<AvailableLift>();
 
             foreach (var lift in lifts)
             {
-                var driver = await users.FindAsync(user => user.Email == lift.DriverEmail).Result.FirstOrDefaultAsync();
-                var route = await routes.FindAsync(uroute => uroute.Path == lift.Route).Result.FirstOrDefaultAsync();
-                var vehicle = await vehicles.FindAsync(v => v.Plate == lift.Plate).Result.FirstOrDefaultAsync();
-
-                var availableLift = new AvailableLift
+                var driver = drivers.FirstOrDefault(d => d.Email == lift.DriverEmail);
+                var route = routeNames.FirstOrDefault(rp => rp.Name == lift.Route);
+                
+                var vehicle = vehiclePlates.FirstOrDefault(vp => vp.Plate == lift.Plate && vp.Email == lift.DriverEmail);
+                    
+                if (driver != null && route != null && vehicle != null)
                 {
-                    Lift = lift,
-                    Driver = driver,
-                    Route = route,
-                    Vehicle = vehicle
-                };
+                    var availableLift = new AvailableLift
+                    {
+                        Lift = lift,
+                        Driver = driver,
+                        Route = route,
+                        Vehicle = vehicle
+                    };
 
-                liftsList.Add(availableLift);
+                    liftsList.Add(availableLift);
+                }
             }
-
             return liftsList;
         }
 
-        public Task<List<AvailableLift>> GetAvailableLifts(bool wOnly)
+        // public async Task<List<AvailableLift>> GetAvailableLifts(bool wOnly)
+        // {
+        //     if (wOnly)
+        //     {
+        //         var availableLifts = await GetAvailableLifts();
+        //         var filteredLifts = availableLifts.Where(lift => lift.Driver.Gender == "F").ToList();
+        //         return filteredLifts;
+        //     }
+        //     return await GetAvailableLifts();
+        // }
+
+        public async Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly)
         {
-            if (wOnly)
+            var availableLifts = await GetAvailableLifts();
+
+            if (!wOnly)
             {
-                return GetAvailableLifts().ContinueWith(task => task.Result.Where(lift => lift.Driver.Gender == "F").ToList());
+                return availableLifts;
             }
-            else
-            {
-                return GetAvailableLifts();
-            }
+            
+            var filteredLifts = availableLifts.Where(lift => lift.Driver.Gender == "F").ToList();
+            return filteredLifts;
         }
 
         public async Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD)
         {
             var destination = new { lat, lng };
-            var activeRoutes = await GetAvailableLifts(wOnly);
+            var activeRoutes = await GetAvailableLiftsByDriverGender(wOnly);
 
             var optimizedRoutes = new List<AvailableLift>();
             var distances = new Dictionary<(Lift, Vehicle), double>();

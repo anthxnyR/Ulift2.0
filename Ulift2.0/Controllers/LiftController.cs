@@ -76,7 +76,7 @@ namespace Ulift2._0.Controllers
             {
                 if (lat == 0 && lng == 0)
                 {
-                    return Ok(await db.GetAvailableLifts());
+                    return Ok(await db.GetAvailableLifts(wOnly));
                 }
 
                 var lifts = await db.GetMatch(lat, lng, wOnly, maxD);

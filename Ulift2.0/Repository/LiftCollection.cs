@@ -84,7 +84,8 @@ namespace Ulift2._0.Repository
                     Rating2 = 0,
                     Rating3 = 0,
                     Rating4 = 0,
-                    Rating5 = 0
+                    Rating5 = 0,
+                    CreatedAt = DateTime.Now
                 };
 
                 await InsertLift(newLift);

@@ -228,11 +228,11 @@ namespace Ulift2._0.Repository
             }
         }
 
-        public async Task<List<User>> GetLiftRequest(string id)
+        public async Task<List<User>> GetLiftRequest(string email)
         {
             try
             {
-                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.Lift.Id == new ObjectId(id)).Result.ToListAsync();
+                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.Lift.DriverEmail == email).Result.ToListAsync();
 
                 if (waiting.Count == 0)
                 {

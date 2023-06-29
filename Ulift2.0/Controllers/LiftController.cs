@@ -123,23 +123,14 @@ namespace Ulift2._0.Controllers
         }
 
         [HttpGet("Requests")]
-        public async Task<IActionResult> GetLiftRequest(string id)
+        public async Task<IActionResult> GetLiftRequest(string email)
         {
-            var lifts = await db.GetLiftRequest(id);
+            var lifts = await db.GetLiftRequest(email);
             if (lifts == null)
             {
                 throw new Exception("No se han encontrado viajes");
             }
-            if (lifts.Count > 0)
-            {
-                return Ok(new
-                {
-                    success = true,
-                    message = "optimal routes",
-                    lifts
-                });
-            }
-            else
+            if (lifts.Count == 0)
             {
                 return Ok(new
                 {
@@ -147,6 +138,12 @@ namespace Ulift2._0.Controllers
                     message = "no active lifts",
                 });
             }
+            return Ok(new
+            {
+                success = true,
+                message = "optimal routes",
+                lifts
+            });
         }
 
         [HttpPost("Request")]

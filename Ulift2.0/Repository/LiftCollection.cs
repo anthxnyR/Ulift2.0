@@ -96,8 +96,6 @@ namespace Ulift2._0.Repository
             }
         }
 
-        // make a method that list all lift availableusing MongoDB.Bson;
-
         public async Task<List<AvailableLift>> GetAvailableLifts()
         {
             var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
@@ -147,17 +145,6 @@ namespace Ulift2._0.Repository
             }
             return liftsList;
         }
-
-        // public async Task<List<AvailableLift>> GetAvailableLifts(bool wOnly)
-        // {
-        //     if (wOnly)
-        //     {
-        //         var availableLifts = await GetAvailableLifts();
-        //         var filteredLifts = availableLifts.Where(lift => lift.Driver.Gender == "F").ToList();
-        //         return filteredLifts;
-        //     }
-        //     return await GetAvailableLifts();
-        // }
 
         public async Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly)
         {
@@ -238,6 +225,59 @@ namespace Ulift2._0.Repository
             if (lift.Seats == 0)
             {
                 ModelState.AddModelError("Seats", "El viaje debe tener una cantidad de asientos asociada");
+            }
+        }
+
+        public async Task<List<User>> GetLiftRequest(string id)
+        {
+            try
+            {
+                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.Lift.Id == new ObjectId(id)).Result.ToListAsync();
+
+                if (waiting.Count == 0)
+                {
+                    return new List<User>();
+                    throw new Exception("No hay solicitudes de viaje");
+                }
+
+                var userIDs = waiting.Select(w => w.Passenger.Id).ToList();
+                var usersRequests = await _repository.db.GetCollection<User>("Users").FindAsync(u => userIDs.Contains(u.Id)).Result.ToListAsync();
+                return usersRequests;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> PostRequestLift([FromBody] WaitingList model)
+        {
+            try
+            {
+                var lift = await Collection.FindAsync(l => l.Id == model.Lift.Id).Result.FirstOrDefaultAsync();
+                if (lift == null)
+                {
+                    throw new Exception("El viaje no existe");
+                }
+
+                var wait = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(w => w.Passenger.Id == model.Passenger.Id && w.Lift.Id == model.Lift.Id).Result.FirstOrDefaultAsync();
+                if (wait != null)
+                {
+                    throw new Exception("Pasajero ya está en la lista de espera");
+                }
+
+                var request = new WaitingList
+                {
+                    Lift = model.Lift,
+                    Passenger = model.Passenger
+                };
+                await _repository.db.GetCollection<WaitingList>("WaitingList").InsertOneAsync(request);
+
+                return new OkObjectResult(request);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
             }
         }
     }

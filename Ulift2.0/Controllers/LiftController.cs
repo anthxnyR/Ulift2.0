@@ -121,5 +121,44 @@ namespace Ulift2._0.Controllers
                 throw new Exception("Error");
             }
         }
+
+        [HttpGet("Requests")]
+        public async Task<IActionResult> GetLiftRequest(string id)
+        {
+            var lifts = await db.GetLiftRequest(id);
+            if (lifts == null)
+            {
+                throw new Exception("No se han encontrado viajes");
+            }
+            if (lifts.Count > 0)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = "optimal routes",
+                    lifts
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = "no active lifts",
+                });
+            }
+        }
+
+        [HttpPost("Request")]
+        public async Task<IActionResult> PostRequestLift([FromBody] Models.WaitingList model)
+        {
+            var response = await db.PostRequestLift(model);
+            if (response is BadRequestObjectResult badRequestResult)
+            {
+                return BadRequest("El viaje no ha podido ser creado");
+            }
+            return Created("Lift Created", true);
+        }
+
     }
 }

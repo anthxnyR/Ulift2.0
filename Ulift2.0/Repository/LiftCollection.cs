@@ -16,7 +16,7 @@ using MongoDB.Bson.Serialization;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 using System.Text;
 using System.Net.Http;
-
+using Microsoft.Extensions.Azure;
 
 namespace Ulift2._0.Repository
 {
@@ -68,8 +68,12 @@ namespace Ulift2._0.Repository
                     throw new Exception("El vehículo no existe o no está registrado al usuario");
                 }
 
+                Guid myuuid = Guid.NewGuid();
+                string myuuidAsString = myuuid.ToString();
+
                 var newLift = new Lift
                 {
+                    LiftId = myuuidAsString,
                     DriverEmail = Lift.DriverEmail,
                     DriverRating = 0,
                     Status = "A",
@@ -102,6 +106,7 @@ namespace Ulift2._0.Repository
         {
             var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
             var liftsCursor = await Collection.FindAsync(filter);
+            
             var lifts = await liftsCursor.ToListAsync();
 
             if (lifts == null || !lifts.Any())
@@ -204,7 +209,7 @@ namespace Ulift2._0.Repository
 
         public async Task AcceptRequest(string LiftId, string passengerEmail)
         {
-            var filter = Builders<Lift>.Filter.Eq(lift => lift.Id, new ObjectId(LiftId));
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, LiftId);
             var liftCursor = await Collection.FindAsync(filter);
             var lift = await liftCursor.FirstOrDefaultAsync();
 
@@ -264,7 +269,7 @@ namespace Ulift2._0.Repository
 
         public async Task StartLift(string LiftId)
         {
-            var filter = Builders<Lift>.Filter.Eq(lift => lift.Id, new ObjectId(LiftId));
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, LiftId);
             var liftCursor = await Collection.FindAsync(filter);
             var lift = await liftCursor.FirstOrDefaultAsync();
 

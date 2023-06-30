@@ -21,7 +21,7 @@ namespace Ulift2._0.Repository
 
         public async Task InsertRequest(WaitingList waitingList)
         {
-            var lift = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.Id == new ObjectId(waitingList.LiftId) && x.Status == "A").Result.FirstOrDefaultAsync();
+            var lift = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.LiftId == waitingList.LiftId && x.Status == "A").Result.FirstOrDefaultAsync();
             if (lift == null)
             {
                 throw new Exception("No existe un viaje activo.");

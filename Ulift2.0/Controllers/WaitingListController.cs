@@ -20,7 +20,7 @@ namespace Ulift2._0.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpPost("Request")]
         public async Task<IActionResult> InsertRequest([FromBody] Models.WaitingList waitingList)
         {
             if (waitingList == null)
@@ -61,7 +61,7 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAllRequests());
         }
-        [HttpGet("{driverEmail}")]
+        [HttpGet("Requests/{driverEmail}")]
         public async Task<IActionResult> GetAllRequestsByDriver(String driverEmail)
         {
             return Ok(await db.GetAllRequestsByDriver(driverEmail));

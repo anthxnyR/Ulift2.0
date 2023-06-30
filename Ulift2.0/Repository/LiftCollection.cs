@@ -13,8 +13,10 @@ using MongoDB.Bson.IO;
 using Newtonsoft.Json;
 using Ulift2._0.Helpers;
 using MongoDB.Bson.Serialization;
-using Newtonsoft.Json;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
+using System.Text;
+using System.Net.Http;
+
 
 namespace Ulift2._0.Repository
 {
@@ -232,7 +234,7 @@ namespace Ulift2._0.Repository
         {
             try
             {
-                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.Lift.DriverEmail == email).Result.ToListAsync();
+                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.DriverEmail == email).Result.ToListAsync();
 
                 if (waiting.Count == 0)
                 {
@@ -240,44 +242,13 @@ namespace Ulift2._0.Repository
                     throw new Exception("No hay solicitudes de viaje");
                 }
 
-                var userIDs = waiting.Select(w => w.Passenger.Id).ToList();
+                var userIDs = waiting.Select(w => w.Id).ToList();
                 var usersRequests = await _repository.db.GetCollection<User>("Users").FindAsync(u => userIDs.Contains(u.Id)).Result.ToListAsync();
                 return usersRequests;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IActionResult> PostRequestLift([FromBody] WaitingList model)
-        {
-            try
-            {
-                var lift = await Collection.FindAsync(l => l.Id == model.Lift.Id).Result.FirstOrDefaultAsync();
-                if (lift == null)
-                {
-                    throw new Exception("El viaje no existe");
-                }
-
-                var wait = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(w => w.Passenger.Id == model.Passenger.Id && w.Lift.Id == model.Lift.Id).Result.FirstOrDefaultAsync();
-                if (wait != null)
-                {
-                    throw new Exception("Pasajero ya está en la lista de espera");
-                }
-
-                var request = new WaitingList
-                {
-                    Lift = model.Lift,
-                    Passenger = model.Passenger
-                };
-                await _repository.db.GetCollection<WaitingList>("WaitingList").InsertOneAsync(request);
-
-                return new OkObjectResult(request);
-            }
-            catch (Exception ex)
-            {
-                return new BadRequestObjectResult(ex.Message);
             }
         }
     }

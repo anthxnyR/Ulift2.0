@@ -19,7 +19,5 @@ namespace Ulift2._0.Repository
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
         Task<IActionResult> CreateLift(LiftCreation lift);
         Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD);
-        Task<List<User>> GetLiftRequest(string email);
-        Task<IActionResult> PostRequestLift([FromBody] WaitingList model);
     }
 }

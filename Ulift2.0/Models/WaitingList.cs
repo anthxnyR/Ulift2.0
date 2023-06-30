@@ -11,7 +11,7 @@ namespace Ulift2._0.Models
     {
         [BsonId]
         public ObjectId Id;
-        public String DriverEmail { get; set; }
+        public String LiftId { get; set; }
         public String PassengerEmail { get; set; }
     }
 }

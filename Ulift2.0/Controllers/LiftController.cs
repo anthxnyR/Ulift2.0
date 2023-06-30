@@ -121,6 +121,31 @@ namespace Ulift2._0.Controllers
                 throw new Exception("Error");
             }
         }
+        [HttpPost("AcceptRequest")]
+        public async Task<IActionResult> AcceptRequest(string LiftId, string passengerEmail)
+        {
+            try
+            {
+                await db.AcceptRequest(LiftId, passengerEmail);
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
+        [HttpPost("StartLift")]
+        public async Task<IActionResult> StartLift(string LiftId)
+        {
+            try
+            {
+                await db.StartLift(LiftId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
 
     }
 }

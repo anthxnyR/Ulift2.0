@@ -24,5 +24,6 @@ namespace Ulift2._0.Models
         public double DriverRating { get; set; }
         public bool ConfirmedUser { get; set; }
         public int LiftCount { get; set; }
+        public string Status { get; set; }
     }
 }

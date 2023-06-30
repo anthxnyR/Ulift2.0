@@ -34,7 +34,7 @@ namespace Ulift2._0.Controllers
             }catch(Exception e)
             {
                 _logger.LogInformation(e.Message);
-                return BadRequest(ModelState);
+                return BadRequest(e.Message);
             }
             return Created("Created", true);
         }
@@ -61,10 +61,10 @@ namespace Ulift2._0.Controllers
         {
             return Ok(await db.GetAllRequests());
         }
-        [HttpGet("Requests/{driverEmail}")]
-        public async Task<IActionResult> GetAllRequestsByDriver(String driverEmail)
+        [HttpGet("Requests/{LiftId}")]
+        public async Task<IActionResult> GetAllRequestsByDriver(String LiftId)
         {
-            return Ok(await db.GetAllRequestsByDriver(driverEmail));
+            return Ok(await db.GetAllRequestsByLift(LiftId));
         }
     }
 }

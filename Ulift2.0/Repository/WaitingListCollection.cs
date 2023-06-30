@@ -21,7 +21,7 @@ namespace Ulift2._0.Repository
 
         public async Task InsertRequest(WaitingList waitingList)
         {
-            var lift = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.DriverEmail == waitingList.DriverEmail && x.Status == "A").Result.FirstOrDefaultAsync();
+            var lift = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.Id == new ObjectId(waitingList.LiftId) && x.Status == "A").Result.FirstOrDefaultAsync();
             if (lift == null)
             {
                 throw new Exception("No existe un viaje activo.");
@@ -33,7 +33,7 @@ namespace Ulift2._0.Repository
                 throw new Exception("No existe el usuario.");
             }
 
-            var wait = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.PassengerEmail == waitingList.PassengerEmail && x.DriverEmail == waitingList.DriverEmail).Result.FirstOrDefaultAsync();
+            var wait = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.PassengerEmail == waitingList.PassengerEmail && x.LiftId == waitingList.LiftId).Result.FirstOrDefaultAsync();
             if (wait != null)
             {
                 throw new Exception("Ya existe una solicitud de viaje.");
@@ -41,14 +41,14 @@ namespace Ulift2._0.Repository
             await Collection.InsertOneAsync(waitingList);
         }
 
-        public async Task UpdateRequest(WaitingList vehicle)
+        public async Task UpdateRequest(WaitingList list)
         {
-            var filter = Builders<WaitingList>.Filter.Eq(s => s.Id, vehicle.Id);
-            await Collection.ReplaceOneAsync(filter, vehicle);
+            var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, list.LiftId);
+            await Collection.ReplaceOneAsync(filter, list);
         }
         public async Task DeleteRequest(String id)
         {
-            var filter = Builders<WaitingList>.Filter.Eq(s => s.Id, new ObjectId(id));
+            var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, id);
             await Collection.DeleteOneAsync(filter);
         }
         public async Task<IEnumerable<WaitingList>> GetAllRequests()
@@ -56,9 +56,9 @@ namespace Ulift2._0.Repository
             
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
-        public async Task<IEnumerable<WaitingList>> GetAllRequestsByDriver(String driverEmail)
+        public async Task<IEnumerable<WaitingList>> GetAllRequestsByLift(String LiftId)
         {
-            var filter = Builders<WaitingList>.Filter.Eq(s => s.DriverEmail, driverEmail);
+            var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, LiftId);
             return await Collection.FindAsync(filter).Result.ToListAsync();
         }
 

@@ -13,6 +13,6 @@ namespace Ulift2._0.Repository
         Task DeleteRequest(string id);
         Task<IEnumerable<WaitingList>> GetAllRequests();
         Task UpdateRequest(WaitingList list);
-        Task <IEnumerable<WaitingList>> GetAllRequestsByDriver(String driverEmail);
+        Task <IEnumerable<WaitingList>> GetAllRequestsByLift(String LiftId);
     }
 }

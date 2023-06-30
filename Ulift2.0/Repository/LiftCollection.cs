@@ -202,6 +202,97 @@ namespace Ulift2._0.Repository
             }
         }
 
+        public async Task AcceptRequest(string LiftId, string passengerEmail)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.Id, new ObjectId(LiftId));
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status != "A")
+            {
+                throw new Exception("El viaje no está disponible");
+            }
+
+            if (lift.Status == "P")
+            {
+                throw new Exception("El viaje ya está en proceso");
+            }
+
+            if (lift.Status == "F")
+            {
+                throw new Exception("El viaje ya finalizó");
+            }
+
+            if (lift.Email1 == passengerEmail || lift.Email2 == passengerEmail || lift.Email3 == passengerEmail || lift.Email4 == passengerEmail || lift.Email5 == passengerEmail)
+            {
+                throw new Exception("El pasajero ya está registrado en el viaje");
+            }
+
+            if (lift.Email1 == "")
+            {
+                lift.Email1 = passengerEmail;
+            }
+            else if (lift.Email2 == "")
+            {
+                lift.Email2 = passengerEmail;
+            }
+            else if (lift.Email3 == "")
+            {
+                lift.Email3 = passengerEmail;
+            }
+            else if (lift.Email4 == "")
+            {
+                lift.Email4 = passengerEmail;
+            }
+            else if (lift.Email5 == "")
+            {
+                lift.Email5 = passengerEmail;
+            }
+            else
+            {
+                throw new Exception("El viaje está lleno");
+            }
+
+            lift.Seats = lift.Seats - 1;
+            await Collection.ReplaceOneAsync(filter, lift);
+        }
+
+        public async Task StartLift(string LiftId)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.Id, new ObjectId(LiftId));
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status != "A")
+            {
+                throw new Exception("El viaje no está disponible");
+            }
+
+            if (lift.Status == "P")
+            {
+                throw new Exception("El viaje ya está en proceso");
+            }
+
+            if (lift.Status == "F")
+            {
+                throw new Exception("El viaje ya finalizó");
+            }
+
+            lift.Status = "P";
+            await Collection.ReplaceOneAsync(filter, lift);
+        }
+
+
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {
             //if (lift.LiftID == null)
@@ -227,28 +318,6 @@ namespace Ulift2._0.Repository
             if (lift.Seats == 0)
             {
                 ModelState.AddModelError("Seats", "El viaje debe tener una cantidad de asientos asociada");
-            }
-        }
-
-        public async Task<List<User>> GetLiftRequest(string email)
-        {
-            try
-            {
-                var waiting = await _repository.db.GetCollection<WaitingList>("WaitingList").FindAsync(x => x.DriverEmail == email).Result.ToListAsync();
-
-                if (waiting.Count == 0)
-                {
-                    return new List<User>();
-                    throw new Exception("No hay solicitudes de viaje");
-                }
-
-                var userIDs = waiting.Select(w => w.Id).ToList();
-                var usersRequests = await _repository.db.GetCollection<User>("Users").FindAsync(u => userIDs.Contains(u.Id)).Result.ToListAsync();
-                return usersRequests;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
             }
         }
     }

@@ -91,6 +91,7 @@ namespace Ulift2._0.Repository
                 DriverRating = 0,
                 ConfirmedUser = false,
                 LiftCount = 0,
+                Status = "P",
             };
 
             

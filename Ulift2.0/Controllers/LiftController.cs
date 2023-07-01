@@ -122,7 +122,7 @@ namespace Ulift2._0.Controllers
                 throw new Exception("Error");
             }
         }
-        [HttpPost("AcceptRequest")]
+        [HttpPost("AcceptRequest/{liftId}/{passengerEmail}")]
         public async Task<IActionResult> AcceptRequest(string LiftId, string passengerEmail)
         {
             try

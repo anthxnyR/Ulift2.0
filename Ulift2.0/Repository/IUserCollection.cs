@@ -15,5 +15,6 @@ namespace Ulift2._0.Repository
         Task<IEnumerable<User>> GetAllUsers();
         void ValidateUserAttributes(User user, ModelStateDictionary ModelState);
         Task<object> GetUserInformation(string email);
+        Task<string> GetUserStatus (string email);
     }
 }

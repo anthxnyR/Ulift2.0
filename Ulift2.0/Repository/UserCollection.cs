@@ -9,6 +9,7 @@ using Ulift2._0.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ulift2._0.Repository
 {
@@ -74,6 +75,26 @@ namespace Ulift2._0.Repository
                 Destinations = destinations,
                 URoutes = routes
             };
+        }
+        public async Task<string> GetUserStatus(string email)
+        {
+            var user = await Collection.Find(u => u.Email == email).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                throw new Exception("El usuario no existe");
+            }
+            if (user.Status == "D")
+            {
+                return "Conductor";
+            }
+            else if (user.Status == "P")
+            {
+                return "Pasajero";
+            }
+            else
+            {
+                throw new Exception("Estado inválido");
+            }
         }
     }
 }

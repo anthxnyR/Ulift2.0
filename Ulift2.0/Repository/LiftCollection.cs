@@ -94,6 +94,9 @@ namespace Ulift2._0.Repository
                     CreatedAt = DateTime.Now
                 };
 
+                driver.Status = "D";
+                await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == Lift.DriverEmail, driver);
+
                 await InsertLift(newLift);
                 return new OkObjectResult(newLift);
             }catch (Exception ex)
@@ -297,6 +300,40 @@ namespace Ulift2._0.Repository
             await Collection.ReplaceOneAsync(filter, lift);
         }
 
+        public async Task<string> PasajeroCheck(string passengerEmail)
+        {
+            var filter = Builders<Lift>.Filter.Or(
+                               Builders<Lift>.Filter.Eq(lift => lift.Email1, passengerEmail),
+                                              Builders<Lift>.Filter.Eq(lift => lift.Email2, passengerEmail),
+                                                             Builders<Lift>.Filter.Eq(lift => lift.Email3, passengerEmail),
+                                                                            Builders<Lift>.Filter.Eq(lift => lift.Email4, passengerEmail),
+                                                                                           Builders<Lift>.Filter.Eq(lift => lift.Email5, passengerEmail)
+                                                                                                      );
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El pasajero no está registrado en ningún viaje");
+            }
+            if (lift.Status == "A")
+            {
+                throw new Exception("El viaje no ha iniciado");
+            }
+
+            if (lift.Status != "P")
+            {
+                throw new Exception("El viaje no está en proceso");
+            }
+
+            var response = new
+            {
+                message = "Tu viaje ha finalizado. ¡Gracias por viajar con nosotros!"
+            };
+
+            return JsonConvert.SerializeObject(response);
+
+        }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

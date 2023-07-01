@@ -79,5 +79,22 @@ namespace Ulift2._0.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
+        [HttpGet("status/{email}")]
+        public async Task<IActionResult> GetUserStatus(string email)
+        {
+            try
+            {
+                var query = await db.GetUserStatus(email);
+                if (query == null)
+                {
+                    return BadRequest();
+                }
+                return Ok(query);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
     }
 }

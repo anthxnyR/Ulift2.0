@@ -146,6 +146,19 @@ namespace Ulift2._0.Controllers
             }
             return Ok();
         }
+        [HttpGet("PasajeroCheck")]
+        public async Task<IActionResult> PasajeroCheck(string passengerEmail)
+        {
+            try
+            {
+                var response = await db.PasajeroCheck(passengerEmail);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
     }
 }

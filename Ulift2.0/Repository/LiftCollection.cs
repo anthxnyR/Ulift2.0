@@ -348,11 +348,12 @@ namespace Ulift2._0.Repository
 
         }
 
-        // public Task DeleteLiftByDriver(string driverEmail)
-        // {
-        //     var filter = Builders<Lift>.Filter.Eq(lift => lift.DriverEmail, driverEmail);
-        //     var lifts = Collection.FindAsync(filter);
-        // }
+        public async Task DeleteLiftByDriver(string driverEmail)
+        {
+            var filterEmail = Builders<Lift>.Filter.Eq(lift => lift.DriverEmail, driverEmail);
+            var lifts = Collection.FindAsync(filterEmail);
+            await Collection.DeleteManyAsync(filterEmail);
+        }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

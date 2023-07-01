@@ -161,18 +161,18 @@ namespace Ulift2._0.Controllers
             }
         }
 
-        // [HttpDelete("cancelarLift")]
-        // public async Task<IActionResult> DeleteLiftByDriver(string LiftId)
-        // {
-        //     try
-        //     {
-        //         await db.DeleteLiftByDriver(LiftId);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return BadRequest(e.Message);
-        //     }
-        //     return Ok();
-        // }
+        [HttpDelete("cancelarLift")]
+        public async Task<IActionResult> DeleteLiftByDriver(string driverEmail)
+        {
+            try
+            {
+                await db.DeleteLiftByDriver(driverEmail);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
     }
 }

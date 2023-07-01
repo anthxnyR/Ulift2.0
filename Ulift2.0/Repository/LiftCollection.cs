@@ -359,11 +359,6 @@ namespace Ulift2._0.Repository
                 throw new Exception("El viaje no existe");
             }
 
-            if (lift.Status != "F")
-            {
-                throw new Exception("El viaje no ha finalizado");
-            }
-
             var update = Builders<Lift>.Update.Set(x => x.complete, true);
 
             await Collection.UpdateOneAsync(filter, update);

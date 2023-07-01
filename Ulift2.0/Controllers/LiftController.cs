@@ -57,11 +57,12 @@ namespace Ulift2._0.Controllers
         public async Task<IActionResult> CreateLift([FromBody] Models.LiftCreation lift)
         {
             var response = await db.CreateLift(lift);
-            if (response is BadRequestObjectResult badRequestResult)
+            if (response == null)
             {
                 return BadRequest("El viaje no ha podido ser creado");
             }
-            return Created("Lift Created", true);
+            Created("Lift Created", true);
+            return Ok(response);
         }
         [HttpGet("Available")]
         public async Task<IActionResult> GetAvailableLiftsByDriverGender(bool wOnly)
@@ -160,5 +161,18 @@ namespace Ulift2._0.Controllers
             }
         }
 
+        // [HttpDelete("cancelarLift")]
+        // public async Task<IActionResult> DeleteLiftByDriver(string LiftId)
+        // {
+        //     try
+        //     {
+        //         await db.DeleteLiftByDriver(LiftId);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return BadRequest(e.Message);
+        //     }
+        //     return Ok();
+        // }
     }
 }

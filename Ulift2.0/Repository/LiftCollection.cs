@@ -47,7 +47,7 @@ namespace Ulift2._0.Repository
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
 
-        public async Task<IActionResult> CreateLift([FromBody] LiftCreation Lift)
+        public async Task<Lift> CreateLift([FromBody] LiftCreation Lift)
         {
             try 
             { 
@@ -98,10 +98,10 @@ namespace Ulift2._0.Repository
                 await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == Lift.DriverEmail, driver);
 
                 await InsertLift(newLift);
-                return new OkObjectResult(newLift);
+                return newLift;
             }catch (Exception ex)
             {
-                return new BadRequestObjectResult(ex.Message);
+                throw new Exception("Error al crear el viaje");
             }
         }
 
@@ -347,6 +347,12 @@ namespace Ulift2._0.Repository
             return JsonConvert.SerializeObject(response);
 
         }
+
+        // public Task DeleteLiftByDriver(string driverEmail)
+        // {
+        //     var filter = Builders<Lift>.Filter.Eq(lift => lift.DriverEmail, driverEmail);
+        //     var lifts = Collection.FindAsync(filter);
+        // }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

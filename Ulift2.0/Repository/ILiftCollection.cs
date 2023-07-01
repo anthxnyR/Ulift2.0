@@ -17,10 +17,11 @@ namespace Ulift2._0.Repository
         Task<List<AvailableLift>> GetAvailableLifts();
         Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly);
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
-        Task<IActionResult> CreateLift(LiftCreation lift);
+        Task<Lift> CreateLift(LiftCreation lift);
         Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD);
         Task AcceptRequest (string LiftId, string passengerEmail);
         Task StartLift (string LiftId);
         Task<string> PasajeroCheck (string passengerEmail);
+        // Task DeleteLiftByDriver(string liftId);
     }
 }

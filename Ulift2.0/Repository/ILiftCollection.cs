@@ -23,5 +23,6 @@ namespace Ulift2._0.Repository
         Task StartLift (string LiftId);
         Task<string> PasajeroCheck (string passengerEmail);
         Task DeleteLiftByDriver(string liftId);
+        // Task<IActionResult> LiftCompleteCheck();
     }
 }

@@ -348,12 +348,31 @@ namespace Ulift2._0.Repository
 
         }
 
+        // solo para pruebas del front
         public async Task DeleteLiftByDriver(string driverEmail)
         {
             var filterEmail = Builders<Lift>.Filter.Eq(lift => lift.DriverEmail, driverEmail);
             var lifts = Collection.FindAsync(filterEmail);
             await Collection.DeleteManyAsync(filterEmail);
         }
+
+        // public async Task<IActionResult> LiftCompleteCheck()
+        // {
+        //     var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "P");
+        //     var liftCursor = await Collection.FindAsync(filter);
+        //     var lifts = await liftCursor.ToListAsync();
+
+        //     foreach (var lift in lifts)
+        //     {
+        //         if (lift.Status == "P")
+        //         {
+        //             lift.Status = "F";
+        //             await Collection.ReplaceOneAsync(filter, lift);
+        //         }
+        //     }
+
+        //     return new OkResult();
+        // }
 
         public void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState)
         {

@@ -147,7 +147,7 @@ namespace Ulift2._0.Controllers
             }
             return Ok();
         }
-        [HttpGet("PasajeroCheck")]
+        [HttpGet("PasajeroCheck/{passengerEmail}")]
         public async Task<IActionResult> PasajeroCheck(string passengerEmail)
         {
             try
@@ -174,5 +174,19 @@ namespace Ulift2._0.Controllers
             }
             return Ok();
         }
+
+        // [HttpPut("complete")]
+        // public async Task<IActionResult> LiftCompleteCheck()
+        // {
+        //     try
+        //     {
+        //         await db.LiftCompleteCheck();
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return BadRequest(e.Message);
+        //     }
+        //     return Ok();
+        // }
     }
 }

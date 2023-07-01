@@ -350,18 +350,30 @@ namespace Ulift2._0.Repository
 
         public async Task LiftCompleteCheck(String liftId)
         {
-            var filter = Builders<Lift>.Filter.Eq(x => x.LiftId, liftId);
-            var liftCursor = await Collection.FindAsync(filter);
-            var lift = await liftCursor.FirstOrDefaultAsync();
-
-            if (lift == null)
+            try 
             {
-                throw new Exception("El viaje no existe");
+                var filter = Builders<Lift>.Filter.Eq(x => x.LiftId, liftId);
+                var liftCursor = await Collection.FindAsync(filter);
+                var lift = await liftCursor.FirstOrDefaultAsync();
+
+                if (lift == null)
+                {
+                    throw new Exception("El viaje no existe");
+                }
+
+                var update = Builders<Lift>.Update.Set(x => x.complete, true);
+
+                await Collection.UpdateOneAsync(filter, update);
             }
+            catch
+            {
+                throw new Exception("Error al actualizar el viaje");
+            }
+        }
 
-            var update = Builders<Lift>.Update.Set(x => x.complete, true);
-
-            await Collection.UpdateOneAsync(filter, update);
+        private void OkResult()
+        {
+            throw new NotImplementedException();
         }
 
 

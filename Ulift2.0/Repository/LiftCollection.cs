@@ -91,7 +91,8 @@ namespace Ulift2._0.Repository
                     Rating3 = 0,
                     Rating4 = 0,
                     Rating5 = 0,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    complete = false
                 };
 
                 driver.Status = "D";
@@ -345,8 +346,29 @@ namespace Ulift2._0.Repository
             };
 
             return JsonConvert.SerializeObject(response);
-
         }
+
+        public async Task LiftCompleteCheck(String liftId)
+        {
+            var filter = Builders<Lift>.Filter.Eq(x => x.LiftId, liftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status != "F")
+            {
+                throw new Exception("El viaje no ha finalizado");
+            }
+
+            var update = Builders<Lift>.Update.Set(x => x.complete, true);
+
+            await Collection.UpdateOneAsync(filter, update);
+        }
+
 
         // solo para pruebas del front
         public async Task DeleteLiftByDriver(string driverEmail)

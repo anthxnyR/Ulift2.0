@@ -175,18 +175,18 @@ namespace Ulift2._0.Controllers
             return Ok();
         }
 
-        // [HttpPut("complete")]
-        // public async Task<IActionResult> LiftCompleteCheck()
-        // {
-        //     try
-        //     {
-        //         await db.LiftCompleteCheck();
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return BadRequest(e.Message);
-        //     }
-        //     return Ok();
-        // }
+        [HttpPut("complete/{liftId}")]
+        public async Task<IActionResult> LiftCompleteCheck(string liftId)
+        {
+            try
+            {
+                await db.LiftCompleteCheck(liftId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
     }
 }

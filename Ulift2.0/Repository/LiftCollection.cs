@@ -270,7 +270,8 @@ namespace Ulift2._0.Repository
 
             using (HttpClient client = new HttpClient())
             {
-                string url = $"https://ulift.azurewebsites.net/api/WaitingList/{LiftId}/{passengerEmail}";
+                //xd
+                string url = $"https://ulift.azurewebsites.net/api/WaitingList?Id={LiftId}&Email={passengerEmail}";
                 HttpResponseMessage response = await client.DeleteAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {

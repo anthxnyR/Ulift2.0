@@ -51,9 +51,9 @@ namespace Ulift2._0.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteVehicle(String id)
+        public async Task<IActionResult> DeleteRequest(String Id, String Email)
         {
-            await db.DeleteRequest(id);
+            await db.DeleteRequest(Id,Email);
             return Ok();
         }
         [HttpGet]

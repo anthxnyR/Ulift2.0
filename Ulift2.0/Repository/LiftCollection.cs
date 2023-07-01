@@ -267,6 +267,18 @@ namespace Ulift2._0.Repository
             }
 
             lift.Seats = lift.Seats - 1;
+
+            using (HttpClient client = new HttpClient())
+            {
+                string url = $"https://ulift.azurewebsites.net/api/WaitingList/{LiftId}/{passengerEmail}";
+                HttpResponseMessage response = await client.DeleteAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Error al eliminar la instancia de WaitingList");
+                }
+            }
+
+
             await Collection.ReplaceOneAsync(filter, lift);
         }
 

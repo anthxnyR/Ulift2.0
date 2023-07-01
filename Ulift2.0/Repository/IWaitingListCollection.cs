@@ -10,9 +10,9 @@ namespace Ulift2._0.Repository
     interface IWaitingListCollection
     {
         Task InsertRequest(WaitingList list);
-        Task DeleteRequest(string id);
+        Task DeleteRequest(String Id, String email);
         Task<IEnumerable<WaitingList>> GetAllRequests();
         Task UpdateRequest(WaitingList list);
-        Task <IEnumerable<WaitingList>> GetAllRequestsByLift(String LiftId);
+        Task <IEnumerable<WaitingListWithUser>> GetAllRequestsByLift(String LiftId);
     }
 }

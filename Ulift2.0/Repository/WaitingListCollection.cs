@@ -46,9 +46,9 @@ namespace Ulift2._0.Repository
             var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, list.LiftId);
             await Collection.ReplaceOneAsync(filter, list);
         }
-        public async Task DeleteRequest(String id)
+        public async Task DeleteRequest(String Id, String email)
         {
-            var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, id);
+            var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, Id) & Builders<WaitingList>.Filter.Eq(s => s.PassengerEmail, email);
             await Collection.DeleteOneAsync(filter);
         }
         public async Task<IEnumerable<WaitingList>> GetAllRequests()
@@ -56,12 +56,25 @@ namespace Ulift2._0.Repository
             
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
-        public async Task<IEnumerable<WaitingList>> GetAllRequestsByLift(String LiftId)
+        public async Task<IEnumerable<WaitingListWithUser>> GetAllRequestsByLift(String LiftId)
         {
             var filter = Builders<WaitingList>.Filter.Eq(s => s.LiftId, LiftId);
-            return await Collection.FindAsync(filter).Result.ToListAsync();
+            var waitingLists = await Collection.FindAsync(filter).Result.ToListAsync();
+
+            var waitingListsWithUser = new List<WaitingListWithUser>();
+            foreach (var waitingList in waitingLists)
+            {
+                var user = await _repository.db.GetCollection<User>("Users").FindAsync(x => x.Email == waitingList.PassengerEmail).Result.FirstOrDefaultAsync();
+               
+                var waitingListWithUser = new WaitingListWithUser
+                {
+                    WaitingList = waitingList,
+                    User = user
+                };
+
+                waitingListsWithUser.Add(waitingListWithUser);
+            }
+            return waitingListsWithUser;
         }
-
-
     }
 }

@@ -134,7 +134,7 @@ namespace Ulift2._0.Controllers
             }
             return Ok();
         }
-        [HttpPost("StartLift")]
+        [HttpPost("StartLift/{liftId}}")]
         public async Task<IActionResult> StartLift(string LiftId)
         {
             try

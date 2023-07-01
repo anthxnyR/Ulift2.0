@@ -147,7 +147,7 @@ namespace Ulift2._0.Controllers
             }
             return Ok();
         }
-        [HttpGet("PasajeroCheck/{passengerEmail}")]
+        [HttpPost("PasajeroCheck/{passengerEmail}")]
         public async Task<IActionResult> PasajeroCheck(string passengerEmail)
         {
             try

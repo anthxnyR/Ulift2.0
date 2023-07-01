@@ -30,6 +30,6 @@ namespace Ulift2._0.Models
         public int Seats { get; set; }
         public int WaitingTime { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool complete { get; set; }
+        // public bool complete { get; set; }
     }   
 }

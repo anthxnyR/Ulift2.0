@@ -91,8 +91,7 @@ namespace Ulift2._0.Repository
                     Rating3 = 0,
                     Rating4 = 0,
                     Rating5 = 0,
-                    CreatedAt = DateTime.Now,
-                    complete = false
+                    CreatedAt = DateTime.Now
                 };
 
                 driver.Status = "D";
@@ -361,7 +360,7 @@ namespace Ulift2._0.Repository
                     throw new Exception("El viaje no existe");
                 }
 
-                var update = Builders<Lift>.Update.Set(x => x.complete, true);
+                var update = Builders<Lift>.Update.Set(x => x.Status, "F");
 
                 await Collection.UpdateOneAsync(filter, update);
             }
@@ -370,12 +369,6 @@ namespace Ulift2._0.Repository
                 throw new Exception("Error al actualizar el viaje");
             }
         }
-
-        private void OkResult()
-        {
-            throw new NotImplementedException();
-        }
-
 
         // solo para pruebas del front
         public async Task DeleteLiftByDriver(string driverEmail)

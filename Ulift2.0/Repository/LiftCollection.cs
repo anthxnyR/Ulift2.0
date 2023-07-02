@@ -56,7 +56,7 @@ namespace Ulift2._0.Repository
                 {
                     throw new Exception("El conductor no existe");
                 }
-                var driverStatus = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.DriverEmail == Lift.DriverEmail && x.Status == "A").Result.FirstOrDefaultAsync();
+                var driverStatus = await _repository.db.GetCollection<Lift>("Lifts").FindAsync(x => x.DriverEmail == Lift.DriverEmail && (x.Status == "A" || x.Status == "P")).Result.FirstOrDefaultAsync();
                 if (driverStatus != null)
                 {
                     throw new Exception("El conductor ya tiene un viaje asociado");
@@ -91,6 +91,11 @@ namespace Ulift2._0.Repository
                     Rating3 = 0,
                     Rating4 = 0,
                     Rating5 = 0,
+                    Check1 = false,
+                    Check2 = false,
+                    Check3 = false,
+                    Check4 = false,
+                    Check5 = false,
                     CreatedAt = DateTime.Now
                 };
 

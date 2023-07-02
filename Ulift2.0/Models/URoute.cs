@@ -14,5 +14,6 @@ namespace Ulift2._0.Models
         public String Email { get; set; }
         public String Path { get; set; }
         public String Name { get; set; }
+        public bool inUcab { get; set; }
     }
 }

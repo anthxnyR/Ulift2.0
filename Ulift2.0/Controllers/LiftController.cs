@@ -66,9 +66,9 @@ namespace Ulift2._0.Controllers
             return Ok(response);
         }
         [HttpGet("Available")]
-        public async Task<IActionResult> GetAvailableLiftsByDriverGender(bool wOnly)
+        public async Task<IActionResult> GetAvailableLiftsByDriverGender(bool wOnly, bool inUcab)
         {
-            var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly);
+            var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly, inUcab);
             
             foreach (var lift in availableLifts)
             {
@@ -78,8 +78,8 @@ namespace Ulift2._0.Controllers
             return Ok(availableLifts);
         }
 
-       [HttpGet("{lat}/{lng}/{wOnly}/{maxD}")]
-        public async Task<IActionResult> GetMatch(double lat, double lng, bool wOnly, int maxD)
+       [HttpGet("{lat}/{lng}/{wOnly}/{maxD}/{inUcab}")]
+        public async Task<IActionResult> GetMatch(double lat, double lng, bool wOnly, int maxD, bool inUcab)
         {
             try
             {
@@ -89,11 +89,11 @@ namespace Ulift2._0.Controllers
                 // var maxD = int.Parse(Request.Query["maxD"]);
                 if (lat == 0 && lng == 0)
                 {
-                    var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly);
+                    var availableLifts = await db.GetAvailableLiftsByDriverGender(wOnly, inUcab);
                     return Ok(availableLifts);
                 }
 
-                var lifts = await db.GetMatch(lat, lng, wOnly, maxD);
+                var lifts = await db.GetMatch(lat, lng, wOnly, maxD, inUcab);
 
                 if (lifts == null)
                 {

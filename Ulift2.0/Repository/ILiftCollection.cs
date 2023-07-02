@@ -14,11 +14,11 @@ namespace Ulift2._0.Repository
         Task UpdateLift(Lift lift);
         Task DeleteLift(String id);
         Task<IEnumerable<Lift>> GetAllLifts();
-        Task<List<AvailableLift>> GetAvailableLifts();
-        Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly);
+        Task<List<AvailableLift>> GetAvailableLifts(bool inUcab);
+        Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly, bool inUcab);
         void ValidateLiftAttributes(Lift lift, ModelStateDictionary ModelState);
         Task<Lift> CreateLift(LiftCreation lift);
-        Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD);
+        Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD, bool inUcab);
         Task AcceptRequest (string LiftId, string passengerEmail);
         Task StartLift (string LiftId);
         Task<string> PasajeroCheck (string passengerEmail);

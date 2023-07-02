@@ -71,6 +71,8 @@ namespace Ulift2._0.Repository
                     throw new Exception("El vehículo no existe o no está registrado al usuario");
                 }
 
+                var route = await _repository.db.GetCollection<URoute>("Routes").FindAsync(x => x.Name == Lift.Route).Result.FirstOrDefaultAsync();
+
                 Guid myuuid = Guid.NewGuid();
                 string myuuidAsString = myuuid.ToString();
 
@@ -99,7 +101,8 @@ namespace Ulift2._0.Repository
                     Check3 = false,
                     Check4 = false,
                     Check5 = false,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    inUcab = route.inUcab
                 };
 
                 driver.Status = "D";
@@ -113,10 +116,12 @@ namespace Ulift2._0.Repository
             }
         }
 
-        public async Task<List<AvailableLift>> GetAvailableLifts()
+        public async Task<List<AvailableLift>> GetAvailableLifts(bool inUcab)
         {
             var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
-            var liftsCursor = await Collection.FindAsync(filter);
+            var filter2 = inUcab ? Builders<Lift>.Filter.Eq(lift => lift.inUcab, true) : Builders<Lift>.Filter.Eq(lift => lift.inUcab, false);
+
+            var liftsCursor = await Collection.FindAsync(filter & filter2);
 
             var lifts = await liftsCursor.ToListAsync();
 
@@ -164,9 +169,9 @@ namespace Ulift2._0.Repository
             return liftsList;
         }
 
-        public async Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly)
+        public async Task<List<AvailableLift>> GetAvailableLiftsByDriverGender(bool wOnly, bool inUcab)
         {
-            var availableLifts = await GetAvailableLifts();
+            var availableLifts = await GetAvailableLifts(inUcab);
 
             if (!wOnly)
             {
@@ -177,10 +182,10 @@ namespace Ulift2._0.Repository
             return filteredLifts;
         }
 
-        public async Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD)
+        public async Task<List<AvailableLift>> GetMatch(double lat, double lng, bool wOnly, int maxD, bool inUcab)
         {
             var destination = new { lat, lng };
-            var activeRoutes = await GetAvailableLiftsByDriverGender(wOnly);
+            var activeRoutes = await GetAvailableLiftsByDriverGender(wOnly, inUcab);
 
             var optimizedRoutes = new List<AvailableLift>();
             var distances = new Dictionary<(Lift, Vehicle), double>();

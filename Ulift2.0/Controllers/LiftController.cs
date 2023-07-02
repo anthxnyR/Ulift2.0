@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ulift2._0.Models;
 using Ulift2._0.Repository;
 
 namespace Ulift2._0.Controllers
@@ -176,17 +177,60 @@ namespace Ulift2._0.Controllers
         }
 
         [HttpPut("complete/{liftId}")]
-        public async Task<IActionResult> LiftCompleteCheck(string liftId)
+        public async Task<IActionResult> LiftCompleteCheck2(string liftId)
         {
             try
             {
-                await db.LiftCompleteCheck(liftId);
+                await db.LiftCompleteCheck2(liftId);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
             return Ok();
+        }
+
+        //Este es el nuevo metodo donde agrega los ratings de los pasajeros
+        [HttpPut("complete")]
+        public async Task<IActionResult> LiftCompleteCheck([FromBody] PassengerRatings ratingList)
+        {
+            try
+            {
+                await db.LiftCompleteCheck(ratingList);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
+
+        //Esto recibe el rating del pasajero al conductor y le hace el check de que llegó
+        [HttpPost("createRatingPassenger")]
+        public async Task<IActionResult> CreateRatingPassenger(String liftId, String passengerEmail, int rating )
+        {
+            try
+            {
+                await db.CreateRatingPassenger(liftId,passengerEmail,rating);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
+        [HttpGet("checkPassengerArriving")]
+        public async Task<IActionResult> CheckPassengerArriving(String liftId)
+        {
+            try
+            {
+                var response = await db.CheckAllArriving(liftId);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

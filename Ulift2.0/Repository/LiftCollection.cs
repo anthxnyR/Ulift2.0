@@ -17,6 +17,7 @@ using JsonConvert = Newtonsoft.Json.JsonConvert;
 using System.Text;
 using System.Net.Http;
 using Microsoft.Extensions.Azure;
+using Ulift2._0.Repository;
 
 namespace Ulift2._0.Repository
 {
@@ -24,10 +25,12 @@ namespace Ulift2._0.Repository
     {
         internal MongoDBRepository _repository = new MongoDBRepository();
         private IMongoCollection<Lift> Collection;
+        private IMongoCollection<User> UserCollection;
         public LiftCollection()
         {
             Collection = _repository.db.GetCollection<Lift>("Lifts");
         }
+
         public async Task InsertLift(Lift lift)
         {
             await Collection.InsertOneAsync(lift);
@@ -49,8 +52,8 @@ namespace Ulift2._0.Repository
 
         public async Task<Lift> CreateLift([FromBody] LiftCreation Lift)
         {
-            try 
-            { 
+            try
+            {
                 var driver = await _repository.db.GetCollection<User>("Users").FindAsync(x => x.Email == Lift.DriverEmail).Result.FirstOrDefaultAsync();
                 if (driver == null)
                 {
@@ -104,7 +107,7 @@ namespace Ulift2._0.Repository
 
                 await InsertLift(newLift);
                 return newLift;
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 throw new Exception("Error al crear el viaje");
             }
@@ -114,7 +117,7 @@ namespace Ulift2._0.Repository
         {
             var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "A");
             var liftsCursor = await Collection.FindAsync(filter);
-            
+
             var lifts = await liftsCursor.ToListAsync();
 
             if (lifts == null || !lifts.Any())
@@ -142,9 +145,9 @@ namespace Ulift2._0.Repository
             {
                 var driver = drivers.FirstOrDefault(d => d.Email == lift.DriverEmail);
                 var route = routeNames.FirstOrDefault(rp => rp.Name == lift.Route);
-                
+
                 var vehicle = vehiclePlates.FirstOrDefault(vp => vp.Plate == lift.Plate && vp.Email == lift.DriverEmail);
-                    
+
                 if (driver != null && route != null && vehicle != null)
                 {
                     var availableLift = new AvailableLift
@@ -169,7 +172,7 @@ namespace Ulift2._0.Repository
             {
                 return availableLifts;
             }
-            
+
             var filteredLifts = availableLifts.Where(lift => lift.Driver.Gender == "F").ToList();
             return filteredLifts;
         }
@@ -352,9 +355,9 @@ namespace Ulift2._0.Repository
             return JsonConvert.SerializeObject(response);
         }
 
-        public async Task LiftCompleteCheck(String liftId)
+        public async Task LiftCompleteCheck2(String liftId)
         {
-            try 
+            try
             {
                 var filter = Builders<Lift>.Filter.Eq(x => x.LiftId, liftId);
                 var liftCursor = await Collection.FindAsync(filter);
@@ -375,12 +378,155 @@ namespace Ulift2._0.Repository
             }
         }
 
+        public async Task LiftCompleteCheck([FromBody] PassengerRatings ratingList)
+        {
+            var filter = Builders<Lift>.Filter.Eq(x => x.LiftId, ratingList.LiftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if(lift.Status == "A")
+            {
+                throw new Exception("El viaje no ha iniciado");
+            }
+
+            if (lift.Status == "F")
+            {
+                throw new Exception("El viaje ya está marcado como finalizado");
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var emailProperty = ratingList.GetType().GetProperty("Email" + i);
+                var emailValue = (string)emailProperty.GetValue(ratingList);
+                if(emailValue != "")
+                {
+                    var ratingProperty = ratingList.GetType().GetProperty("Rating" + i);
+                    var ratingValue = (int)ratingProperty.GetValue(ratingList);
+
+                    for (int j = 1; j <= 5; j++)
+                    {
+                        var emailProperty2 = lift.GetType().GetProperty("Email" + j);
+                        var emailValue2 = (string)emailProperty2.GetValue(lift);
+                        if (emailValue2 == emailValue)
+                        {
+                            var ratingProperty2 = lift.GetType().GetProperty("Rating" + j);
+                            ratingProperty2.SetValue(lift, ratingValue);
+                            break;
+                        }
+                    }
+                }
+
+            }
+
+            lift.Status = "F";
+            var driver = await _repository.db.GetCollection<User>("Users").FindAsync(x => x.Email == lift.DriverEmail).Result.FirstOrDefaultAsync();
+            driver.Status = "P";
+            driver.LiftCount = driver.LiftCount + 1;
+            await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == lift.DriverEmail, driver);
+            await Collection.ReplaceOneAsync(filter, lift);
+        }
+
         // solo para pruebas del front
         public async Task DeleteLiftByDriver(string driverEmail)
         {
             var filterEmail = Builders<Lift>.Filter.Eq(lift => lift.DriverEmail, driverEmail);
             var lifts = Collection.FindAsync(filterEmail);
             await Collection.DeleteManyAsync(filterEmail);
+        }
+
+        public async Task CreateRatingPassenger(String liftId, String passengerEmail, int rating)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, liftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status == "A")
+            {
+                throw new Exception("El viaje no ha comenzado.");
+            }
+
+            if (lift.DriverRating == 0)
+            {
+                lift.DriverRating = rating;
+            }
+            else
+            {
+                float checkCounter = 0;
+                for (int i = 1; i < 5; i++)
+                {
+                    var checkProperty = lift.GetType().GetProperty("Check" + i);
+                    bool checkValue = (bool)checkProperty.GetValue(lift);
+                    if (checkValue)
+                    {
+                        checkCounter++;
+                    }
+                }
+                
+                float driverPoints = lift.DriverRating * checkCounter;
+                driverPoints += rating;
+                lift.DriverRating = driverPoints / (checkCounter + 1);
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var emailProperty = lift.GetType().GetProperty("Email" + i);
+                String emailValue = (String)emailProperty.GetValue(lift);
+                if(emailValue == passengerEmail)
+                {
+                    var checkProperty = lift.GetType().GetProperty("Check" + i);
+                    checkProperty.SetValue(lift, true);
+                    break;
+                }
+            }
+            await Collection.ReplaceOneAsync(filter, lift);
+        }
+
+        public async Task<bool> CheckAllArriving(String liftId)
+        {
+            int emailCounter = 0;
+            int checkCounter = 0;
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, liftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var emailProperty = lift.GetType().GetProperty("Email" + i);
+                String emailValue = (String)emailProperty.GetValue(lift);
+                if (emailValue != "")
+                {
+                    emailCounter++;
+                    var checkProperty = lift.GetType().GetProperty("Check" + i);
+                    bool checkValue = (bool)checkProperty.GetValue(lift);
+                    if (checkValue)
+                    {
+                        checkCounter++;
+                    }
+                }
+            }
+
+            if (emailCounter == checkCounter)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         // public async Task<IActionResult> LiftCompleteCheck()

@@ -23,6 +23,9 @@ namespace Ulift2._0.Repository
         Task StartLift (string LiftId);
         Task<string> PasajeroCheck (string passengerEmail);
         Task DeleteLiftByDriver(string liftId);
-        Task LiftCompleteCheck(String liftId);
+        Task LiftCompleteCheck2(String liftId);
+        Task LiftCompleteCheck([FromBody] PassengerRatings ratingList);
+        Task CreateRatingPassenger(String liftId, String passengerEmail, int rating);
+        Task<bool> CheckAllArriving(String liftId);
     }
 }

@@ -21,7 +21,7 @@ namespace Ulift2._0.Controllers
             _logger = logger;
         }
         
-        [HttpGet]
+        [HttpGet("{userEmail}")]
         public async Task<IActionResult> GetAllFavoritesOfAnUser(string UserEmail)
         {
             return Ok(await db.GetAllFavoritesOfAnUser(UserEmail));

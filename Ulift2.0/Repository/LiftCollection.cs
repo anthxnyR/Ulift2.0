@@ -534,6 +534,29 @@ namespace Ulift2._0.Repository
             }
         }
 
+        public async Task<bool> CheckAcceptCola (String liftId, String email)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, liftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                  throw new Exception("El viaje no existe");
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var emailProperty = lift.GetType().GetProperty("Email" + i);
+                String emailValue = (String)emailProperty.GetValue(lift);
+                if (emailValue == email)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // public async Task<IActionResult> LiftCompleteCheck()
         // {
         //     var filter = Builders<Lift>.Filter.Eq(lift => lift.Status, "P");

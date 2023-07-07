@@ -27,5 +27,6 @@ namespace Ulift2._0.Repository
         Task LiftCompleteCheck([FromBody] PassengerRatings ratingList);
         Task CreateRatingPassenger(String liftId, String passengerEmail, int rating);
         Task<bool> CheckAllArriving(String liftId);
+        Task<bool> CheckAcceptCola (String liftId, String email);
     }
 }

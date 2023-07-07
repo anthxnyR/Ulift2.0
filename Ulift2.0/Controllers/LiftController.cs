@@ -232,5 +232,19 @@ namespace Ulift2._0.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("checkAcceptCola")]
+        public async Task<IActionResult> CheckAcceptCola(String liftId, String email)
+        {
+            try
+            {
+                var response = await db.CheckAcceptCola(liftId, email);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

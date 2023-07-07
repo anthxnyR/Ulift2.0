@@ -22,9 +22,9 @@ namespace Ulift2._0.Controllers
         }
         
         [HttpGet("{userEmail}")]
-        public async Task<IActionResult> GetAllFavoritesOfAnUser(string UserEmail)
+        public async Task<IActionResult> GetAllFavoritesOfAnUser(string userEmail)
         {
-            return Ok(await db.GetAllFavoritesOfAnUser(UserEmail));
+            return Ok(await db.GetAllFavoritesOfAnUser(userEmail));
         }
 
         [HttpPost]

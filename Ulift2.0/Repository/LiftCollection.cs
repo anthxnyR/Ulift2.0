@@ -418,6 +418,15 @@ namespace Ulift2._0.Repository
                         var emailValue2 = (string)emailProperty2.GetValue(lift);
                         if (emailValue2 == emailValue)
                         {
+
+                            //Actualizar rating del conductor
+                            var filterUser = Builders<User>.Filter.Eq(x => x.Email, emailValue);
+                            var userCursor = await _repository.db.GetCollection<User>("Users").FindAsync(filterUser);
+                            var user = await userCursor.FirstOrDefaultAsync();
+                            user.PassengerRating = (user.PassengerRating*user.LiftCountAsPassenger + ratingValue) / (user.LiftCountAsPassenger + 1);
+                            user.LiftCountAsPassenger = user.LiftCountAsPassenger + 1;
+                            await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == emailValue, user);
+
                             var ratingProperty2 = lift.GetType().GetProperty("Rating" + j);
                             ratingProperty2.SetValue(lift, ratingValue);
                             break;
@@ -430,7 +439,8 @@ namespace Ulift2._0.Repository
             lift.Status = "F";
             var driver = await _repository.db.GetCollection<User>("Users").FindAsync(x => x.Email == lift.DriverEmail).Result.FirstOrDefaultAsync();
             driver.Status = "P";
-            driver.LiftCount = driver.LiftCount + 1;
+            driver.DriverRating = (driver.DriverRating * driver.LiftCountAsDriver + lift.DriverRating) / (driver.LiftCountAsDriver + 1);
+            driver.LiftCountAsDriver = driver.LiftCountAsDriver + 1;
             await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == lift.DriverEmail, driver);
             await Collection.ReplaceOneAsync(filter, lift);
         }

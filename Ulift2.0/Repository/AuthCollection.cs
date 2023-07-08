@@ -86,11 +86,13 @@ namespace Ulift2._0.Repository
                 LastName = request.LastName,
                 Gender = request.Gender,
                 Role = request.Role,
+                EmergencyContactName = request.EmergencyContactName,
                 EmergencyContact = request.EmergencyContact,
                 PassengerRating = 0,
                 DriverRating = 0,
                 ConfirmedUser = false,
-                LiftCount = 0,
+                LiftCountAsDriver = 0,
+                LiftCountAsPassenger = 0,
                 Status = "P",
             };
 

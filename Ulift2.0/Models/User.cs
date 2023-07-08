@@ -19,11 +19,13 @@ namespace Ulift2._0.Models
         public String PhotoURL { get; set; }
         public String Gender { get; set; }
         public String Role { get; set; }
+        public String EmergencyContactName { get; set; }
         public String EmergencyContact { get; set; }
         public double PassengerRating { get; set; }
         public double DriverRating { get; set; }
         public bool ConfirmedUser { get; set; }
-        public int LiftCount { get; set; }
+        public int LiftCountAsDriver { get; set; }
+        public int LiftCountAsPassenger { get; set; }
         public string Status { get; set; }
     }
 }

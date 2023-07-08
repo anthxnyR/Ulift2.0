@@ -14,6 +14,7 @@ namespace Ulift2._0.Models
         public IFormFile Photo { get; set; }
         public String Gender { get; set; }
         public String Role { get; set; }
+        public String EmergencyContactName { get; set; }
         public String EmergencyContact { get; set; }
     }
 }

@@ -28,5 +28,8 @@ namespace Ulift2._0.Repository
         Task CreateRatingPassenger(String liftId, String passengerEmail, int rating);
         Task<bool> CheckAllArriving(String liftId);
         Task<bool> CheckAcceptCola (String liftId, String email);
+        Task<IEnumerable<User>> UsersInLift(string liftId);
+        Task<User> DriverInLift(string LiftId);
+
     }
 }

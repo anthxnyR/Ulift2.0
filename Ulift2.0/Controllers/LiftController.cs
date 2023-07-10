@@ -249,5 +249,33 @@ namespace Ulift2._0.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("usersInLift/{liftId}")]
+        public async Task<IActionResult> UsersInLift(String liftId)
+        {
+            try
+            {
+                var response = await db.UsersInLift(liftId);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("driverInLift/{liftId}")]
+        public async Task<IActionResult> DriverInLift(String liftId)
+        {
+            try
+            {
+                var response = await db.DriverInLift(liftId);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

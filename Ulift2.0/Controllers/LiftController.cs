@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ulift2._0.Models;
 using Ulift2._0.Repository;
+using Ulift2._0.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Ulift2._0.Controllers
 {
@@ -13,12 +15,13 @@ namespace Ulift2._0.Controllers
     [ApiController]
     public class LiftController : Controller
     {
-        private ILiftCollection db = new LiftCollection();
+        private ILiftCollection db;
         private readonly ILogger<LiftController> _logger;
 
-        public LiftController(ILogger<LiftController> logger)
+        public LiftController(ILogger<LiftController> logger, IHubContext<ChatHub> chatHubContext)
         {
             _logger = logger;
+            db = new LiftCollection(chatHubContext);
         }
 
         [HttpGet]

@@ -18,6 +18,8 @@ using System.Text;
 using System.Net.Http;
 using Microsoft.Extensions.Azure;
 using Ulift2._0.Repository;
+using Ulift2._0.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Ulift2._0.Repository
 {
@@ -26,9 +28,12 @@ namespace Ulift2._0.Repository
         internal MongoDBRepository _repository = new MongoDBRepository();
         private IMongoCollection<Lift> Collection;
         private IMongoCollection<User> UserCollection;
-        public LiftCollection()
+        private readonly IHubContext<ChatHub> _chatHubContext;
+
+        public LiftCollection(IHubContext<ChatHub> chatHubContext)
         {
             Collection = _repository.db.GetCollection<Lift>("Lifts");
+            _chatHubContext = chatHubContext;
         }
 
         public async Task InsertLift(Lift lift)
@@ -292,8 +297,64 @@ namespace Ulift2._0.Repository
                 }
             }
 
-
             await Collection.ReplaceOneAsync(filter, lift);
+            
+            await _chatHubContext.Clients.User(passengerEmail).SendAsync("ReceiveMessage", "¡Has sido aceptado como pasajero!");
+        }
+
+        public async Task<IEnumerable<User>> UsersInLift(string LiftId)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, LiftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status != "A")
+            {
+                throw new Exception("El viaje no está disponible");
+            }
+
+            if (lift.Status != "P")
+            {
+                throw new Exception("El viaje no está en proceso");
+            }
+
+            var users = _repository.db.GetCollection<User>("Users");
+            var usersCursor = await users.FindAsync(user => (user.Email != null && (user.Email == lift.Email1 || user.Email == lift.Email2 || user.Email == lift.Email3 || user.Email == lift.Email4 || user.Email == lift.Email5)));
+            var usersList = await usersCursor.ToListAsync();
+        
+            return usersList;
+        }
+
+        public async Task<User> DriverInLift(string LiftId)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId , LiftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if (lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+
+            if (lift.Status != "A")
+            {
+                throw new Exception("El viaje no está disponible");
+            }
+
+            if (lift.Status != "P")
+            {
+                throw new Exception("El viaje no está en proceso");
+            }
+
+            var d = _repository.db.GetCollection<User>("Users");
+            var driverCursor = await d.FindAsync(driver => driver.Email == lift.DriverEmail);
+            var driver = await driverCursor.FirstOrDefaultAsync();
+            return driver;
         }
 
         public async Task StartLift(string LiftId)

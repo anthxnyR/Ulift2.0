@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Ulift2._0.Hubs;
 
 namespace Ulift2._0
 {
@@ -17,6 +18,8 @@ namespace Ulift2._0
                         policy.WithOrigins("http://localhost:3000");
                     });
             });
+
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,6 +44,7 @@ namespace Ulift2._0
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

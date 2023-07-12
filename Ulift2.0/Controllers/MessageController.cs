@@ -78,5 +78,11 @@ namespace Ulift2._0.Controllers
             return Ok();
         }
 
+        [HttpGet("{senderEmail}/{receiverEmail}")]
+        public async Task<IActionResult> GetAllMessagesFromUser(String senderEmail, String receiverEmail)
+        {
+            return Ok(await db.GetAllMessagesFromUser(senderEmail, receiverEmail));
+        }
+
     }
 }

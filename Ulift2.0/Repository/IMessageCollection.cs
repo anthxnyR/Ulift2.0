@@ -13,6 +13,7 @@ namespace Ulift2._0.Repository
         Task UpdateMessage(Message message);
         Task DeleteMessage(String id);
         Task<IEnumerable<Message>> GetAllMessages();
+        Task<List<Message>> GetAllMessagesFromUser(String senderEmail, String receiverEmail);
         void ValidateMessageAttributes(Message message, ModelStateDictionary ModelState);
     }
 }

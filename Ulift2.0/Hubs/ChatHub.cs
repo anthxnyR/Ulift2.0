@@ -5,7 +5,7 @@ using Ulift2._0.Models;
 
 namespace Ulift2._0.Hubs
 {
-    public class ChatHub : Hub<IChatClient>
+    public class ChatHub : Hub
     {
         public async Task SendMessage(string senderEmail, string receiverEmail, string message)
         {

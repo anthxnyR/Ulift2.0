@@ -37,9 +37,11 @@ namespace Ulift2._0.Repository
             return await Collection.FindAsync(new BsonDocument()).Result.ToListAsync();
         }
 
-        public async Task<List<Message>> GetAllMessagesFromUser(String senderEmail, String receiverEmail) { 
-            var filter = Builders<Message>.Filter.Eq(s => s.SenderEmail, senderEmail);
-            return await Collection.FindAsync(filter).Result.ToListAsync();
+        public async Task<List<Message>> GetAllMessagesFromUser(String senderEmail, String receiverEmail) {
+            var filter = Builders<Message>.Filter.Eq(s => s.SenderEmail, senderEmail) & Builders<Message>.Filter.Eq(s => s.ReceiverEmail, receiverEmail);
+            var merge = Builders<Message>.Filter.Or(filter, Builders<Message>.Filter.And(Builders<Message>.Filter.Eq(s => s.SenderEmail, receiverEmail), Builders<Message>.Filter.Eq(s => s.ReceiverEmail, senderEmail)));
+
+            return await Collection.FindAsync(merge).Result.ToListAsync();
         }
 
         public void ValidateMessageAttributes(Message message, ModelStateDictionary ModelState)

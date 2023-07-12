@@ -63,6 +63,42 @@ namespace Ulift2._0.Repository
             {
                 ModelState.AddModelError("Seats", "El vehiculo debe tener una cantidad de asientos asociada");
             }
+            if (vehicle.Seats < 0)
+            {
+                ModelState.AddModelError("Seats", "El vehiculo no puede tener una cantidad de asientos negativa");
+            }
+            if (vehicle.Seats > 5)
+            {
+                ModelState.AddModelError("Seats", "El vehiculo no puede tener más de 5 asientos");
+            }
+            if (vehicle.Plate != null)
+            {
+                if (!Regex.IsMatch(vehicle.Plate, @"^[A-Z]{3}\d{3}$"))
+                {
+                    ModelState.AddModelError("LicensePlate", "La placa debe tener el formato ABC123");
+                }
+            }
+            if (vehicle.Color != null)
+            {
+                  if (!Regex.IsMatch(vehicle.Color, @"^[a-zA-Z]+$"))
+                {
+                    ModelState.AddModelError("Color", "El color debe ser una palabra");
+                }
+            }
+            if (vehicle.Model != null)
+            {
+                if (!Regex.IsMatch(vehicle.Model, @"^[a-zA-Z]+$"))
+                {
+                    ModelState.AddModelError("Model", "El modelo debe ser una palabra");
+                }
+            }
+            if (vehicle.Plate != null)
+            {
+                if (vehicle.Plate.Length <= 5 && vehicle.Plate.Length > 7)
+                {
+                    ModelState.AddModelError("LicensePlate", "La placa debe tener 6 o 7 caracteres");
+                }
+            }
         }
     }
 }

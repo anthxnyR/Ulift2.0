@@ -5,9 +5,9 @@ namespace Ulift2._0.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string userEmail, string message)
+        public async Task SendMessage(string senderEmail, string receiverEmail, string message)
         {
-            await Clients.User(userEmail).SendAsync("ReceiveMessage", message);
+            await Clients.User(receiverEmail).SendAsync("ReceiveMessage", senderEmail, message);
         }
     }
 }

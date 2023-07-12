@@ -313,18 +313,8 @@ namespace Ulift2._0.Repository
                 throw new Exception("El viaje no existe");
             }
 
-            if (lift.Status != "A")
-            {
-                throw new Exception("El viaje no está disponible");
-            }
-
-            if (lift.Status != "P")
-            {
-                throw new Exception("El viaje no está en proceso");
-            }
-
             var users = _repository.db.GetCollection<User>("Users");
-            var usersCursor = await users.FindAsync(user => (user.Email != null && (user.Email == lift.Email1 || user.Email == lift.Email2 || user.Email == lift.Email3 || user.Email == lift.Email4 || user.Email == lift.Email5)));
+            var usersCursor = await users.FindAsync(user => (user.Email != "" && (user.Email == lift.Email1 || user.Email == lift.Email2 || user.Email == lift.Email3 || user.Email == lift.Email4 || user.Email == lift.Email5)));
             var usersList = await usersCursor.ToListAsync();
         
             return usersList;
@@ -339,16 +329,6 @@ namespace Ulift2._0.Repository
             if (lift == null)
             {
                 throw new Exception("El viaje no existe");
-            }
-
-            if (lift.Status != "A")
-            {
-                throw new Exception("El viaje no está disponible");
-            }
-
-            if (lift.Status != "P")
-            {
-                throw new Exception("El viaje no está en proceso");
             }
 
             var d = _repository.db.GetCollection<User>("Users");
@@ -675,3 +655,4 @@ namespace Ulift2._0.Repository
         }
     }
 }
+

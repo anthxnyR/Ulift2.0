@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ulift2._0.Hubs;
 using Ulift2._0.Models;
 using Ulift2._0.Repository;
 
@@ -15,10 +17,12 @@ namespace Ulift2._0.Controllers
     {
         private IMessageCollection db = new MessageCollection();
         private readonly ILogger<MessageController> _logger;
+        private readonly IHubContext<ChatHub> _chatHubContext;
 
-        public MessageController(ILogger<MessageController> logger)
+        public MessageController(ILogger<MessageController> logger, IHubContext<ChatHub> chatHubContext)
         {
             _logger = logger;
+            _chatHubContext = chatHubContext;
         }
 
         [HttpGet]
@@ -54,5 +58,25 @@ namespace Ulift2._0.Controllers
             await db.DeleteMessage(id);
             return NoContent();
         }
+
+        [HttpPost("{liftId}/{senderEmail}/{receiverEmail}/{message}")]
+        public async Task<IActionResult> Send(string liftId, string senderEmail, string receiverEmail, string message)
+        {
+            await _chatHubContext.Clients.Client(receiverEmail).SendAsync("ReceiveMessage", senderEmail, message);
+            
+            var newMessage = new Message
+            {
+                SenderEmail = senderEmail,
+                ReceiverEmail = receiverEmail,
+                Content = message,
+                DateTime = DateTime.Now,
+                LiftID = liftId
+            };
+
+            await db.InsertMessage(newMessage);
+
+            return Ok();
+        }
+
     }
 }

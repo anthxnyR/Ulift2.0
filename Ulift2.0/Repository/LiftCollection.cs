@@ -482,6 +482,17 @@ namespace Ulift2._0.Repository
             driver.Status = "P";
             driver.DriverRating = (driver.DriverRating * driver.LiftCountAsDriver + lift.DriverRating) / (driver.LiftCountAsDriver + 1);
             driver.LiftCountAsDriver = driver.LiftCountAsDriver + 1;
+
+            var filterMessage = Builders<Message>.Filter.Eq(x => x.LiftID, lift.LiftId);
+            var messageCursor = await _repository.db.GetCollection<Message>("Messages").FindAsync(filterMessage);
+            var messageList = await messageCursor.ToListAsync();
+
+            foreach (Message message in messageList)
+            {
+                await _repository.db.GetCollection<Message>("Messages").DeleteOneAsync(x => x.Id == message.Id);
+            }
+
+
             await _repository.db.GetCollection<User>("Users").ReplaceOneAsync(x => x.Email == lift.DriverEmail, driver);
             await Collection.ReplaceOneAsync(filter, lift);
         }
@@ -607,6 +618,27 @@ namespace Ulift2._0.Repository
             }
             return false;
         }
+
+        public async Task<bool> liftAvailableChat (string liftId)
+        {
+            var filter = Builders<Lift>.Filter.Eq(lift => lift.LiftId, liftId);
+            var liftCursor = await Collection.FindAsync(filter);
+            var lift = await liftCursor.FirstOrDefaultAsync();
+
+            if(lift == null)
+            {
+                throw new Exception("El viaje no existe");
+            }
+            if (lift.Status == "A" || lift.Status == "P")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         // public async Task<IActionResult> LiftCompleteCheck()
         // {

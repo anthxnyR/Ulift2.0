@@ -30,6 +30,7 @@ namespace Ulift2._0.Repository
         Task<bool> CheckAcceptCola (String liftId, String email);
         Task<IEnumerable<User>> UsersInLift(string liftId);
         Task<User> DriverInLift(string LiftId);
+        Task<bool> liftAvailableChat (string liftId);
 
     }
 }

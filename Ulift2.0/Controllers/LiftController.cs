@@ -277,5 +277,19 @@ namespace Ulift2._0.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("chatAvailable/{liftId}")]
+        public async Task<IActionResult> ChatAvailable(String liftId)
+        {
+            try
+            {
+                var response = await db.liftAvailableChat(liftId);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

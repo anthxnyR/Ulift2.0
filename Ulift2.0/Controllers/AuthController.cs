@@ -76,9 +76,8 @@ namespace Ulift2._0.Controllers
             else
             {
                 await db.Verify(token);
-                return Ok("Tu cuenta fue verificada");
+                return Ok(Return("https://u-lift.netlify.app/login"));
             }
-            
         }
     }
 }

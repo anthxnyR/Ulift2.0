@@ -76,7 +76,7 @@ namespace Ulift2._0.Controllers
             else
             {
                 await db.Verify(token);
-                return Redirect("https://--main.u-lift.netlify.app");
+                return Redirect("https://u-lift.netlify.app");
             }
         }
     }

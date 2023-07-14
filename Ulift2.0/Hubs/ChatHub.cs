@@ -9,7 +9,7 @@ namespace Ulift2._0.Hubs
     {
         public async Task SendMessage(string senderEmail, string receiverEmail, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", senderEmail, message);
+            await Clients.All.SendAsync("ReceiveMessage", senderEmail, receiverEmail, message);
         }
     }
 }

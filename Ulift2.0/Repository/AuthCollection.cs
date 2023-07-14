@@ -179,7 +179,8 @@ namespace Ulift2._0.Repository
             string tokenMailVerification = JwtService.GetToken(recipientEmail);
 
             //Cambiar variable url por la el dominio azure
-            var url = "https://ulift.azurewebsites.net/api/Auth/" + "Verify?token=" + tokenMailVerification;
+            //var url = "https://ulift.azurewebsites.net/api/Auth/" + "Verify?token=" + tokenMailVerification;
+            var url = "https://ulift.azurewebsites.net/api/Auth/Login";
             Console.WriteLine(url);
 
             string filePath = @"Assets\EmailConfirmation.html";

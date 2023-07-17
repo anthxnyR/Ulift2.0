@@ -110,7 +110,7 @@ namespace Ulift2._0.Repository
                 }
                 string blobFileName = newUser.Email + ".jpg";
 
-                string blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=uliftstorage;AccountKey=2NPgmVZDZC/ZEqkJtj4ImFPzsabZArnWcd/Pck8dB0R6GSL16AvxrRXnu//Bke9E3RYpRrXLQ7qx+AStIw6MUQ==;EndpointSuffix=core.windows.net";
+                string blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=uliftprofilepictures;AccountKey=SgdMTcwETsdjZWmHKjyX0oqxbxER7xRiY7dqYmnk77R1xzVNLdyv9LZLZw8KbwLvdcTP3yEkZ4ME+ASt9YE/Bg==;EndpointSuffix=core.windows.net";
                 string blobContainerName = "profilepictures";
                 BlobContainerClient containerClient = new BlobContainerClient(blobConnectionString, blobContainerName);
 

@@ -76,7 +76,7 @@ namespace Ulift2._0.Controllers
             else
             {
                 await db.Verify(token);
-                return Redirect("localhost:3000");
+                return Redirect("http://localhost:3000");
             }
         }
     }

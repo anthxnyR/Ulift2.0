@@ -102,7 +102,7 @@ namespace Ulift2._0.Repository
             {
                 var httpclient = new HttpClient();
                 Console.WriteLine(newUser.PhotoURL);
-                httpclient.BaseAddress = new Uri("https://ulift.azurewebsites.net");
+                httpclient.BaseAddress = new Uri("https://u-lift.azurewebsites.net");
                 string domainPattern = @"@(est.ucab.edu.ve|ucab.edu.ve)$";
                 if (!Regex.IsMatch(newUser.Email, domainPattern, RegexOptions.IgnoreCase))
                 {
